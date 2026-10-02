@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="der-cxp" name="DER corregido">
-        <mxGraphModel dx="3617" dy="2142" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="1600" math="0" shadow="0">
+        <mxGraphModel dx="3735" dy="2134" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="1600" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -23,7 +23,7 @@
                 <mxCell id="CP11_nombre_rol" parent="CP11" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="56" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP11_nombre_rol_k" parent="CP11_nombre_rol" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ" vertex="1">
+                <mxCell id="CP11_nombre_rol_k" parent="CP11_nombre_rol" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -156,7 +156,7 @@
                 <mxCell id="CP09_accion" parent="CP09" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;strokeColor=default;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="134" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP09_accion_k" parent="CP09_accion" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;strokeColor=default;" value="CK" vertex="1">
+                <mxCell id="CP09_accion_k" parent="CP09_accion" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;strokeColor=default;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -250,7 +250,7 @@
                 <mxCell id="CP12_nombre_usuario" parent="CP12" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="82" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP12_nombre_usuario_k" parent="CP12_nombre_usuario" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ" vertex="1">
+                <mxCell id="CP12_nombre_usuario_k" parent="CP12_nombre_usuario" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -276,7 +276,7 @@
                 <mxCell id="CP12_correo" parent="CP12" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="134" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP12_correo_k" parent="CP12_correo" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ" vertex="1">
+                <mxCell id="CP12_correo_k" parent="CP12_correo" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -320,7 +320,7 @@
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="CP12_intentos_fallidos_c" parent="CP12_intentos_fallidos" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;html=1;whiteSpace=wrap;" value="intentos_fallidos TINYINT" vertex="1">
+                <mxCell id="CP12_intentos_fallidos_c" parent="CP12_intentos_fallidos" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;html=1;whiteSpace=wrap;" value="intentos_fallidos INT" vertex="1">
                     <mxGeometry height="26" width="310" x="70" as="geometry">
                         <mxRectangle height="26" width="310" as="alternateBounds"/>
                     </mxGeometry>
@@ -487,7 +487,7 @@
                 <mxCell id="CP08_estado_conciliacion" parent="CP08" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="264" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP08_estado_conciliacion_k" parent="CP08_estado_conciliacion" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="CK" vertex="1">
+                <mxCell id="CP08_estado_conciliacion_k" parent="CP08_estado_conciliacion" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -568,7 +568,7 @@
                 <mxCell id="CP10_frecuencia" parent="CP10" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="134" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP10_frecuencia_k" parent="CP10_frecuencia" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="CK" vertex="1">
+                <mxCell id="CP10_frecuencia_k" parent="CP10_frecuencia" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -740,7 +740,7 @@
                 <mxCell id="CP06_numero_referencia" parent="CP06" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP06_numero_referencia_k" parent="CP06_numero_referencia" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ" vertex="1">
+                <mxCell id="CP06_numero_referencia_k" parent="CP06_numero_referencia" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -766,7 +766,7 @@
                 <mxCell id="CP06_metodo_pago" parent="CP06" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="38" width="380" y="212" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP06_metodo_pago_k" parent="CP06_metodo_pago" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="CK" vertex="1">
+                <mxCell id="CP06_metodo_pago_k" parent="CP06_metodo_pago" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="38" width="70" as="geometry">
                         <mxRectangle height="38" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -831,7 +831,7 @@
                 <mxCell id="CP06_estado" parent="CP06" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="354" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP06_estado_k" parent="CP06_estado" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="CK" vertex="1">
+                <mxCell id="CP06_estado_k" parent="CP06_estado" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -912,7 +912,7 @@
                 <mxCell id="CP01_identificacion_tributaria" parent="CP01" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="56" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP01_identificacion_tributaria_k" parent="CP01_identificacion_tributaria" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ1" vertex="1">
+                <mxCell id="CP01_identificacion_tributaria_k" parent="CP01_identificacion_tributaria" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -951,7 +951,7 @@
                 <mxCell id="CP01_pais" parent="CP01" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="134" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP01_pais_k" parent="CP01_pais" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ1" vertex="1">
+                <mxCell id="CP01_pais_k" parent="CP01_pais" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1097,7 +1097,7 @@
                 <mxCell id="CP07_id_pago" parent="CP07" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="56" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP07_id_pago_k" parent="CP07_id_pago" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK UQ1" vertex="1">
+                <mxCell id="CP07_id_pago_k" parent="CP07_id_pago" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1110,7 +1110,7 @@
                 <mxCell id="CP07_id_factura" parent="CP07" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="82" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP07_id_factura_k" parent="CP07_id_factura" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK UQ1" vertex="1">
+                <mxCell id="CP07_id_factura_k" parent="CP07_id_factura" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1191,7 +1191,7 @@
                 <mxCell id="CP03_id_moneda" parent="CP03" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="56" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP03_id_moneda_k" parent="CP03_id_moneda" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK UQ1" vertex="1">
+                <mxCell id="CP03_id_moneda_k" parent="CP03_id_moneda" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1204,7 +1204,7 @@
                 <mxCell id="CP03_fecha" parent="CP03" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="82" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP03_fecha_k" parent="CP03_fecha" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ1" vertex="1">
+                <mxCell id="CP03_fecha_k" parent="CP03_fecha" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1259,7 +1259,7 @@
                 <mxCell id="CP04_id_proveedor" parent="CP04" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="56" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP04_id_proveedor_k" parent="CP04_id_proveedor" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK UQ1" vertex="1">
+                <mxCell id="CP04_id_proveedor_k" parent="CP04_id_proveedor" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1298,7 +1298,7 @@
                 <mxCell id="CP04_numero_factura" parent="CP04" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="134" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP04_numero_factura_k" parent="CP04_numero_factura" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ1" vertex="1">
+                <mxCell id="CP04_numero_factura_k" parent="CP04_numero_factura" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1428,7 +1428,7 @@
                 <mxCell id="CP04_estado" parent="CP04" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="394" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP04_estado_k" parent="CP04_estado" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="CK" vertex="1">
+                <mxCell id="CP04_estado_k" parent="CP04_estado" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1470,7 +1470,7 @@
                 <mxCell id="CP02_codigo_iso" parent="CP02" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="56" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP02_codigo_iso_k" parent="CP02_codigo_iso" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ" vertex="1">
+                <mxCell id="CP02_codigo_iso_k" parent="CP02_codigo_iso" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1509,7 +1509,7 @@
                 <mxCell id="CP02_es_moneda_base" parent="CP02" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="134" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP02_es_moneda_base_k" parent="CP02_es_moneda_base" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ*" vertex="1">
+                <mxCell id="CP02_es_moneda_base_k" parent="CP02_es_moneda_base" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1564,7 +1564,7 @@
                 <mxCell id="CP05_id_factura" parent="CP05" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="56" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP05_id_factura_k" parent="CP05_id_factura" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK UQ1" vertex="1">
+                <mxCell id="CP05_id_factura_k" parent="CP05_id_factura" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="FK" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1577,7 +1577,7 @@
                 <mxCell id="CP05_numero_linea" parent="CP05" style="shape=tableRow;horizontal=0;startSize=0;swimlaneHead=0;swimlaneBody=0;fillColor=none;collapsible=0;dropTarget=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;top=0;left=0;right=0;bottom=0;html=1;" value="" vertex="1">
                     <mxGeometry height="26" width="380" y="82" as="geometry"/>
                 </mxCell>
-                <mxCell id="CP05_numero_linea_k" parent="CP05_numero_linea" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="UQ1" vertex="1">
+                <mxCell id="CP05_numero_linea_k" parent="CP05_numero_linea" style="shape=partialRectangle;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=1;fontStyle=1;align=center;overflow=hidden;html=1;whiteSpace=wrap;" value="" vertex="1">
                     <mxGeometry height="26" width="70" as="geometry">
                         <mxRectangle height="26" width="70" as="alternateBounds"/>
                     </mxGeometry>
@@ -1812,9 +1812,6 @@
                             <mxPoint x="980" y="-175"/>
                         </Array>
                     </mxGeometry>
-                </mxCell>
-                <mxCell id="leyenda" parent="1" style="text;html=1;align=left;verticalAlign=top;spacing=10;strokeColor=#666666;fillColor=#f5f5f5;whiteSpace=wrap;" value="&lt;b&gt;Leyenda&lt;/b&gt;&lt;br&gt;&lt;b&gt;PK&lt;/b&gt; llave primaria · &lt;b&gt;FK&lt;/b&gt; llave foránea · &lt;b&gt;UQ&lt;/b&gt; único&lt;br&gt;&lt;b&gt;UQ1&lt;/b&gt; = único compuesto (todas las columnas con UQ1 de la tabla juntas)&lt;br&gt;&lt;b&gt;UQ*&lt;/b&gt; = índice único filtrado WHERE es_moneda_base = 1 (una sola moneda base)&lt;br&gt;&lt;b&gt;CK&lt;/b&gt; = restricción CHECK con la lista de valores permitidos&lt;br&gt;Cardinalidad (pata de gallo): | = uno obligatorio, o| = cero o uno, &amp;lt; = muchos" vertex="1">
-                    <mxGeometry height="190" width="420" x="40" y="720" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>
