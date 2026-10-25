@@ -2,13 +2,13 @@
 
 Sistema académico de cuentas por pagar con base de datos OLTP, Data Warehouse, API PHP y una interfaz web PHP + Bulma + HTMX.
 
-La rama `develop` integra las tres partes del proyecto en un solo checkout:
+La rama `development` integra las tres partes del proyecto en un solo checkout:
 
 - `sql/`: base OLTP, Data Warehouse, ETL y reportes.
 - `backend/`: API JSON, autenticación por sesión, CSRF y acceso a SQL Server.
 - `frontend/`: interfaz web que consume la API desde el servidor con cURL.
 
-> `main` conserva únicamente la documentación general. Para probar el sistema use `develop`.
+> `main` conserva únicamente la documentación general. Para probar el sistema use `development`.
 
 ## Arquitectura
 
@@ -42,7 +42,7 @@ En Windows, las extensiones se pueden cargar al iniciar PHP con `-d extension=..
 ## 1. Clonar e ingresar a la rama integrada
 
 ```powershell
-git clone -b develop https://github.com/PabloD6003/Sistema_Gestion_Cuentas_por_Pagar.git
+git clone -b development https://github.com/PabloD6003/Sistema_Gestion_Cuentas_por_Pagar.git
 cd Sistema_Gestion_Cuentas_por_Pagar
 ```
 
@@ -50,7 +50,7 @@ Si el repositorio ya estaba clonado:
 
 ```powershell
 git fetch origin
-git switch develop
+git switch development
 git pull
 ```
 
