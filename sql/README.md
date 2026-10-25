@@ -4,12 +4,15 @@ Este directorio contiene la implementación de base de datos del sistema.
 
 ## Orden de ejecución
 
+Ejecute los scripts con `sqlcmd` (o desde SSMS) en el orden indicado. Todos los scripts asumen una instancia de SQL Server local de desarrollo.
+
 ### OLTP
 
 1. `oltp/00_base.sql`
    - Crea `CuentasPorPagarDB`.
    - Crea tablas, índices, catálogos, funciones, triggers, procedimientos y roles.
    - Es el script base recibido; no se modifica directamente.
+   - **Es destructivo**: vuelve a crear los objetos de la base. No lo ejecute sobre datos que necesite conservar.
 2. `oltp/01_correcciones.sql`
    - Corrige los hallazgos críticos del script base.
    - Agrega el vínculo pago-descuento.
@@ -17,6 +20,10 @@ Este directorio contiene la implementación de base de datos del sistema.
 3. `oltp/02_lectura.sql`
    - Crea vistas de lectura para la aplicación PHP.
    - Otorga `SELECT` únicamente sobre las vistas, no sobre las tablas base.
+4. `oltp/03_usuarios_demo.sql`
+   - Crea los usuarios de prueba `admin`, `tesorero` y `contador`.
+   - Es idempotente: si un usuario ya existe, lo omite.
+   - No usar estas credenciales en producción.
 
 ### Data Warehouse
 
@@ -26,11 +33,37 @@ Este directorio contiene la implementación de base de datos del sistema.
 2. `dw/02_dim_tiempo.sql`
    - Puebla `dim.tiempo` entre 2020 y 2035.
 3. `dw/03_etl.sql`
-   - Carga dimensiones y hechos desde el OLTP.
-4. `dw/04_views.sql`
+   - Crea los procedimientos del ETL. **No carga datos por sí solo.**
+4. Ejecute la carga inicial:
+   ```sql
+   USE CuentasPorPagarDW;
+   EXEC etl.sp_ejecutar_todo;
+   ```
+5. `dw/04_views.sql`
    - Crea las vistas de reportes analíticos.
-5. `dw/05_validacion.sql`
+6. `dw/05_validacion.sql`
    - Ejecuta controles de calidad e idempotencia del DW.
+   - Confirme visualmente que todos los controles devuelvan `OK`.
+
+La carga puede repetirse; el ETL está diseñado para ser idempotente.
+
+## Comandos de ejemplo
+
+```powershell
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\00_base.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\01_correcciones.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\02_lectura.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\03_usuarios_demo.sql
+
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\01_schema_dw.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\02_dim_tiempo.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\03_etl.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -Q "USE CuentasPorPagarDW; EXEC etl.sp_ejecutar_todo;"
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\04_views.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\05_validacion.sql
+```
+
+Si usa autenticación SQL, reemplace `-E` por `-U <usuario> -P <contraseña>`.
 
 ## Requisitos
 
