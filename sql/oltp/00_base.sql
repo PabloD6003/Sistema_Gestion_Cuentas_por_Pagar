@@ -1,4 +1,4 @@
-﻿SI /*Integrantes:
+﻿/*Integrantes:
 Emmanuel Jimenez Jimenez
 Jhon Lopez Zuñiga
 Joan Garcia Briceño

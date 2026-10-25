@@ -29,6 +29,8 @@ Este directorio contiene la implementación de base de datos del sistema.
    - Carga dimensiones y hechos desde el OLTP.
 4. `dw/04_views.sql`
    - Crea las vistas de reportes analíticos.
+5. `dw/05_validacion.sql`
+   - Ejecuta controles de calidad e idempotencia del DW.
 
 ## Requisitos
 
