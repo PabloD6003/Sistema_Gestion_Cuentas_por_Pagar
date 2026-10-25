@@ -1,0 +1,5 @@
+.env
+storage/cookies/*
+!storage/cookies/.gitkeep
+storage/logs/*
+!storage/logs/.gitkeep
