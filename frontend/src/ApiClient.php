@@ -84,9 +84,9 @@ final class ApiClient
      * @param array<string, mixed> $body
      * @return array<string, mixed>
      */
-    public function post(string $path, array $body = []): array
+    public function post(string $path, array $body = [], int $timeout = 15): array
     {
-        return $this->request('POST', $path, $body);
+        return $this->request('POST', $path, $body, true, $timeout);
     }
 
     /**
@@ -102,7 +102,7 @@ final class ApiClient
      * @param array<string, mixed>|null $body
      * @return array<string, mixed>
      */
-    public function request(string $method, string $path, ?array $body = null, bool $sendCsrf = true): array
+    public function request(string $method, string $path, ?array $body = null, bool $sendCsrf = true, int $timeout = 15): array
     {
         if (!function_exists('curl_init')) {
             throw new ApiException('La extensión cURL de PHP no está habilitada en el servidor de la interfaz.');
@@ -136,7 +136,7 @@ final class ApiClient
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_COOKIEJAR => $this->cookieJar,
             CURLOPT_COOKIEFILE => $this->cookieJar,
-            CURLOPT_TIMEOUT => 15,
+            CURLOPT_TIMEOUT => $timeout,
             CURLOPT_CONNECTTIMEOUT => 5,
             CURLOPT_FOLLOWLOCATION => false,
         ]);
@@ -165,6 +165,10 @@ final class ApiClient
                 ? $decoded['error']
                 : 'La API respondió con un error (' . $status . ').';
             $details = is_array($decoded['details'] ?? null) ? $decoded['details'] : [];
+            // En validaciones la causa concreta viene en details.message ("Datos inválidos." solo no orienta)
+            if (is_string($details['message'] ?? null) && $details['message'] !== '') {
+                $message .= ' ' . $details['message'];
+            }
             throw new ApiException($message, $status, $details);
         }
 

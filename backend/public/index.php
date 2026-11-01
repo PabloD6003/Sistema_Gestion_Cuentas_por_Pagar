@@ -32,14 +32,15 @@ try {
 
     $response = Response::json($payload, $exception->getStatusCode(), $exception->getHeaders());
 } catch (PDOException $exception) {
-    Logger::error($exception, [
-        'method' => $request->method(),
-        'path' => $request->path(),
-    ]);
+    // Las reglas de negocio son respuestas esperadas; solo se registran los errores técnicos
+    if (!SqlError::isBusinessRule($exception)) {
+        Logger::error($exception, [
+            'method' => $request->method(),
+            'path' => $request->path(),
+        ]);
+    }
 
-    $message = Config::bool('APP_DEBUG')
-        ? SqlError::message($exception)
-        : 'No se pudo completar la operación en la base de datos.';
+    $message = SqlError::publicMessage($exception, Config::bool('APP_DEBUG'));
 
     $response = Response::json(['error' => $message], SqlError::status($exception));
 } catch (Throwable $exception) {

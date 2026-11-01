@@ -121,9 +121,15 @@ final class CuentaPagarController
     {
         Auth::requireLogin();
         $id = $this->id($params);
+        $motivo = trim((string) ($request->post('motivo') ?? ''));
+
+        if ($motivo === '') {
+            flash('error', 'Indique el motivo de la anulación.');
+            return Response::redirect('/cuentas/' . $id);
+        }
 
         try {
-            ApiClient::forSession()->post('/api/cuentas/' . $id . '/anular');
+            ApiClient::forSession()->post('/api/cuentas/' . $id . '/anular', ['motivo' => $motivo]);
             flash('success', 'Factura anulada.');
         } catch (ApiException $exception) {
             if ($exception->statusCode() === 401) {

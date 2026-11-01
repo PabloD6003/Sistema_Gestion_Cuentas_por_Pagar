@@ -41,7 +41,7 @@ final class UsuarioRepository
     {
         $row = Database::fetchOne(
             'SELECT u.id_usuario, u.id_rol, u.rol, u.nombre_usuario, u.nombre_completo,
-                    u.correo, u.estado, r.puede_aprobar_pagos
+                    u.correo, u.estado, r.puede_aprobar_pagos, r.nivel_acceso
              FROM dbo.vw_usuarios u
              JOIN dbo.vw_roles r ON r.id_rol = u.id_rol
              WHERE u.id_usuario = ?',
@@ -52,7 +52,7 @@ final class UsuarioRepository
             return null;
         }
 
-        return Cast::row($row, ['id_usuario', 'id_rol'], [], ['estado', 'puede_aprobar_pagos']);
+        return Cast::row($row, ['id_usuario', 'id_rol', 'nivel_acceso'], [], ['estado', 'puede_aprobar_pagos']);
     }
 
     public function changePassword(int $id, string $current, string $new): void

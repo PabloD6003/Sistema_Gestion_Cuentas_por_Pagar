@@ -27,8 +27,9 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
         <div class="buttons">
             <a class="button is-light" href="/cuentas">Volver</a>
             <?php if ($canApprove && $estado !== 'ANULADA'): ?>
-                <form method="post" action="/cuentas/<?= $id ?>/anular" onsubmit="return confirm('¿Anular esta factura? Esta acción no se puede deshacer.');">
+                <form method="post" action="/cuentas/<?= $id ?>/anular" class="action-form" onsubmit="return confirm('¿Anular esta factura? Esta acción no se puede deshacer.');">
                     <?= csrf_field() ?>
+                    <input class="input" name="motivo" placeholder="Motivo de la anulación" maxlength="150" required>
                     <button class="button is-danger is-light" type="submit">Anular factura</button>
                 </form>
             <?php endif; ?>
@@ -171,7 +172,9 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
                                     <td class="has-text-right"><strong><?= money($mov['monto'] ?? 0) ?></strong></td>
                                     <td><?= state_badge($movEstado) ?></td>
                                     <td>
-                                        <?php if ($canApprove && $movEstado === 'REGISTRADO'): ?>
+                                        <?php if ($isDiscount && $movEstado === 'REGISTRADO'): ?>
+                                            <span class="is-size-7 has-text-grey">Se aprueba con el pago</span>
+                                        <?php elseif ($canApprove && $movEstado === 'REGISTRADO'): ?>
                                             <form method="post" action="/pagos/<?= $movId ?>/aprobar">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="return_to" value="/cuentas/<?= $id ?>">
@@ -266,7 +269,7 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
                         <div class="field">
                             <label class="label is-small" for="fecha_pago">Fecha de pago</label>
                             <div class="control">
-                                <input class="input" id="fecha_pago" name="fecha_pago" type="date" value="<?= e(date('Y-m-d')) ?>">
+                                <input class="input" id="fecha_pago" name="fecha_pago" type="date" value="<?= e(date('Y-m-d')) ?>" max="<?= e(date('Y-m-d')) ?>">
                             </div>
                         </div>
 

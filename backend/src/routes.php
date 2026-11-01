@@ -10,6 +10,7 @@ use App\Controllers\HealthController;
 use App\Controllers\MovimientoController;
 use App\Controllers\ProveedorController;
 use App\Controllers\ReporteController;
+use App\Controllers\RespaldoController;
 use App\Http\Router;
 
 $router = new Router();
@@ -49,5 +50,8 @@ $router->get('/api/reportes/pagos-mes', [ReporteController::class, 'pagosMes']);
 $router->get('/api/reportes/cumplimiento', [ReporteController::class, 'cumplimiento']);
 $router->get('/api/reportes/saldos-proveedor', [ReporteController::class, 'saldosProveedor']);
 $router->get('/api/reportes/etl', [ReporteController::class, 'etl']);
+
+$router->get('/api/respaldos', [RespaldoController::class, 'index']);
+$router->post('/api/respaldos', [RespaldoController::class, 'store']);
 
 return $router;

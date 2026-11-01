@@ -126,7 +126,13 @@ final class Database
     }
 
     /**
-     * Ejecuta un procedimiento que termina con un SELECT y devuelve sus filas.
+     * Ejecuta un procedimiento que termina con un SELECT y devuelve las filas del primer
+     * conjunto de resultados con datos.
+     *
+     * Se recorren todos los conjuntos hasta el final: con ODBC, instrucciones como BACKUP
+     * envían primero mensajes informativos (conjuntos sin columnas) y, si la sentencia se
+     * cierra antes de consumirlos, SQL Server cancela el resto del lote sin avisar. Recorrerlos
+     * también hace que un error lanzado después de esos mensajes llegue como excepción.
      *
      * @param array<int, mixed> $params
      * @return array<int, array<string, mixed>>
@@ -134,32 +140,35 @@ final class Database
     public static function call(string $sql, array $params = []): array
     {
         $statement = self::run($sql, $params);
+        $result = [];
 
         do {
-            try {
-                $rows = $statement->fetchAll();
-            } catch (PDOException $e) {
-                if (str_contains(strtolower($e->getMessage()), 'invalid cursor state')) {
-                    return [];
+            if ($statement->columnCount() > 0) {
+                try {
+                    $rows = $statement->fetchAll();
+                } catch (PDOException $e) {
+                    if (!str_contains(strtolower($e->getMessage()), 'invalid cursor state')) {
+                        throw $e;
+                    }
+                    $rows = [];
                 }
-                throw $e;
-            }
 
-            if ($rows !== []) {
-                return $rows;
+                if ($result === [] && $rows !== []) {
+                    $result = $rows;
+                }
             }
 
             try {
                 $hasMore = $statement->nextRowset();
             } catch (PDOException $e) {
                 if (str_contains(strtolower($e->getMessage()), 'invalid cursor state')) {
-                    return [];
+                    break;
                 }
                 throw $e;
             }
         } while ($hasMore);
 
-        return [];
+        return $result;
     }
 
     /**

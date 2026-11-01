@@ -9,6 +9,12 @@ use DateTimeImmutable;
 
 final class Validator
 {
+    /** Máximo de una columna INT de SQL Server. */
+    public const INT_MAX = 2147483647;
+
+    /** Días de crédito permitidos para proveedores y facturas. */
+    public const MAX_DIAS_CREDITO = 365;
+
     /**
      * @param array<string, mixed> $data
      * @param array<int, string> $fields
@@ -27,7 +33,7 @@ final class Validator
         }
     }
 
-    public static function int(mixed $value, string $field, ?int $min = null): int
+    public static function int(mixed $value, string $field, ?int $min = null, ?int $max = self::INT_MAX): int
     {
         if (!is_numeric($value) || (string) (int) $value !== (string) $value) {
             throw self::invalid($field, 'Debe ser un número entero.');
@@ -38,7 +44,23 @@ final class Validator
             throw self::invalid($field, "Debe ser mayor o igual a {$min}.");
         }
 
+        if ($max !== null && $int > $max) {
+            throw self::invalid($field, "Debe ser menor o igual a {$max}.");
+        }
+
         return $int;
+    }
+
+    /**
+     * Rechaza fechas posteriores a hoy (fecha ya validada con date()).
+     */
+    public static function notFuture(string $date, string $field): string
+    {
+        if ($date > (new DateTimeImmutable('today'))->format('Y-m-d')) {
+            throw self::invalid($field, 'La fecha no puede ser posterior a hoy.');
+        }
+
+        return $date;
     }
 
     public static function decimal(mixed $value, string $field, float $min = 0.01, int $scale = 2): float

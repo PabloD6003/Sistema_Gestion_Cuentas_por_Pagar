@@ -25,6 +25,7 @@ final class Auth
             'id_rol' => (int) $user['id_rol'],
             'rol' => (string) $user['rol'],
             'puede_aprobar_pagos' => (bool) $user['puede_aprobar_pagos'],
+            'nivel_acceso' => (int) ($user['nivel_acceso'] ?? 0),
         ];
         $_SESSION['login_at'] = time();
     }
@@ -72,6 +73,27 @@ final class Auth
         $user = self::requireLogin();
         if (!self::canApprove()) {
             throw new HttpException('Su rol no permite aprobar pagos.', 403);
+        }
+
+        return $user;
+    }
+
+    /** Nivel de acceso del rol Administrador (CP11_roles). */
+    public const NIVEL_ADMINISTRADOR = 5;
+
+    public static function isAdmin(): bool
+    {
+        return (int) ($_SESSION['user']['nivel_acceso'] ?? 0) >= self::NIVEL_ADMINISTRADOR;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function requireAdmin(): array
+    {
+        $user = self::requireLogin();
+        if (!self::isAdmin()) {
+            throw new HttpException('Solo un administrador puede realizar esta acción.', 403);
         }
 
         return $user;

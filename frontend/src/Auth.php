@@ -80,6 +80,16 @@ final class Auth
         return $_SESSION['user'];
     }
 
+    /** Nivel de acceso del rol Administrador (CP11_roles). */
+    public const NIVEL_ADMINISTRADOR = 5;
+
+    public static function isAdmin(): bool
+    {
+        $user = self::user();
+
+        return (int) ($user['nivel_acceso'] ?? 0) >= self::NIVEL_ADMINISTRADOR;
+    }
+
     public static function canApprove(): bool
     {
         $user = self::user();

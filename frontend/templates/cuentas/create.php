@@ -62,7 +62,7 @@ $fechaEmision = old($old, 'fecha_emision', date('Y-m-d'));
                             <label class="label is-small" for="fecha_emision">Fecha de emisión *</label>
                             <div class="control">
                                 <input class="input" id="fecha_emision" name="fecha_emision" type="date" required
-                                       value="<?= e($fechaEmision) ?>">
+                                       value="<?= e($fechaEmision) ?>" max="<?= e(date('Y-m-d')) ?>">
                             </div>
                         </div>
                     </div>

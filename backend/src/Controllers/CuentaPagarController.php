@@ -64,8 +64,11 @@ final class CuentaPagarController
 
     public function annul(Request $request, array $params): Response
     {
-        $user = Auth::requireLogin();
-        $this->cuentas->annul($this->id($params), (int) $user['id_usuario']);
+        $user = Auth::requireApprove();
+        $data = $request->json();
+        Validator::required($data, ['motivo']);
+        $motivo = Validator::string($data['motivo'], 'motivo', 150);
+        $this->cuentas->annul($this->id($params), $motivo, (int) $user['id_usuario']);
 
         return Response::noContent();
     }
@@ -116,10 +119,10 @@ final class CuentaPagarController
         return [
             'id_proveedor' => Validator::int($data['id_proveedor'], 'id_proveedor', 1),
             'numero_factura' => Validator::string($data['numero_factura'], 'numero_factura', 50),
-            'fecha_emision' => Validator::date($data['fecha_emision'], 'fecha_emision'),
+            'fecha_emision' => Validator::notFuture(Validator::date($data['fecha_emision'], 'fecha_emision'), 'fecha_emision'),
             'detalle' => $lineas,
             'dias_credito' => array_key_exists('dias_credito', $data) && $data['dias_credito'] !== null
-                ? Validator::int($data['dias_credito'], 'dias_credito', 0)
+                ? Validator::int($data['dias_credito'], 'dias_credito', 0, Validator::MAX_DIAS_CREDITO)
                 : null,
             'pct_descuento_pronto_pago' => $pctDescuento,
             'dias_descuento' => $diasDescuento,
