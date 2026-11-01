@@ -160,6 +160,31 @@ El script `03_usuarios_demo.sql` crea estas cuentas:
 
 Administrador y Tesorero pueden aprobar pagos; el Contador puede registrar facturas y pagos, pero no aprobarlos. Cambie estas contraseñas si va a publicar el sistema fuera de un entorno de prueba.
 
+## Módulos de la interfaz
+
+| Módulo | Roles | Funciones |
+|---|---|---|
+| Proveedores | Todos | Catálogo, expediente con historial de pagos, calificación promedio y evaluaciones de la relación comercial. |
+| Cuentas por pagar | Todos (anular: Tesorero y Administrador) | Registro de facturas, modificación mientras no tengan pagos vigentes, pagos y anulaciones. |
+| Pagos | Todos (aprobar y anular: Tesorero y Administrador) | Aprobación de pagos; el descuento por pronto pago se aprueba junto con su pago. |
+| Tesorería | Tesorero y Administrador | Lotes de transferencia por banco (generar, enviar, procesar, rechazar) y conciliación del extracto bancario. |
+| Reportes | Todos | Antigüedad, pagos por mes, cumplimiento y saldos (Data Warehouse) y flujo de caja proyectado (OLTP, al día). |
+| Respaldos | Administrador | Respaldo completo, diferencial y de log, con historial. |
+
+Las cuentas cuyo vencimiento pasó cambian a **Vencida** automáticamente al consultar el panel o las cuentas por pagar, y también al ejecutar el ETL.
+
+### Conciliación bancaria
+
+En **Tesorería**, elija el banco y pegue el extracto, una línea por movimiento con fecha, referencia y monto, separados por punto y coma, coma o tabulador (sirve copiar desde Excel):
+
+```text
+Fecha;Referencia;Monto
+2026-10-03;TRF-1004;1,220,400.00
+16/10/2026;TRF-7004;355950
+```
+
+Cada línea se concilia con un pago aprobado del mismo banco que tenga igual referencia y monto, y cuya fecha difiera como máximo en la tolerancia indicada (3 días por defecto). El resultado muestra qué líneas se conciliaron y cuáles no tienen coincidencia.
+
 ## Respaldos
 
 El Administrador ve en el menú la opción **Respaldos**, con tres botones:
@@ -211,8 +236,9 @@ docs/                    Documentación y diagramas
 ## Alcance y limitaciones
 
 - Moneda única (CRC); no hay multimoneda.
-- El Data Warehouse se alimenta con un ETL batch; los reportes muestran la última carga.
-- La conciliación de pagos se muestra como estado informativo; no se captura desde la interfaz.
+- El Data Warehouse se alimenta con un ETL batch; los reportes del DW muestran la última carga. El flujo de caja proyectado se calcula al momento desde el OLTP.
+- La conciliación bancaria se hace pegando el extracto en la pantalla de Tesorería; no hay conexión directa con los bancos.
+- Los comprobantes de pago quedan en la cola de notificaciones (`CP18_notificaciones`); el envío del correo no está implementado.
 - Las tablas usan paginación del API, pero la interfaz no incluye controles de páginas.
 - El proyecto está pensado para ejecución local y académica; no incluye despliegue en producción, HTTPS ni un servidor web empresarial.
 
