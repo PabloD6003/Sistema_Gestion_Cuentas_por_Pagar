@@ -12,6 +12,10 @@ $navItems = [
     ['path' => '/pagos', 'label' => 'Pagos', 'hint' => 'Aprobación y conciliación'],
     ['path' => '/reportes', 'label' => 'Reportes', 'hint' => 'Data Warehouse'],
 ];
+
+if (\App\Auth::isAdmin()) {
+    $navItems[] = ['path' => '/respaldos', 'label' => 'Respaldos', 'hint' => 'Copias de seguridad'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">

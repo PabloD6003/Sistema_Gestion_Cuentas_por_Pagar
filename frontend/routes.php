@@ -9,6 +9,7 @@ use App\Controllers\DashboardController;
 use App\Controllers\PagoController;
 use App\Controllers\ProveedorController;
 use App\Controllers\ReporteController;
+use App\Controllers\RespaldoController;
 use App\Http\Request;
 use App\Http\Response;
 use App\Http\Router;
@@ -44,5 +45,8 @@ $router->post('/pagos/{id}/anular', [PagoController::class, 'annul']);
 
 $router->get('/reportes', [ReporteController::class, 'index']);
 $router->get('/partials/reportes/{tipo}', [ReporteController::class, 'partial']);
+
+$router->get('/respaldos', [RespaldoController::class, 'index']);
+$router->post('/respaldos', [RespaldoController::class, 'store']);
 
 return $router;
