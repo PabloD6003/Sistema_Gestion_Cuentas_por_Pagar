@@ -104,6 +104,13 @@ final class CuentaPagarRepository
             ['id_cuenta_pagar', 'id_proveedor', 'dias_credito', 'dias_vencido'],
             ['pct_descuento_pronto_pago', 'subtotal', 'monto_impuesto', 'monto_total', 'saldo_pendiente']
         );
+
+        // Se puede modificar mientras no esté anulada ni tenga movimientos vigentes
+        $vigentes = Database::fetchOne(
+            "SELECT COUNT(*) AS total FROM dbo.vw_movimientos WHERE id_cuenta_pagar = ? AND estado <> 'ANULADO'",
+            [$id]
+        );
+        $row['editable'] = $row['estado'] !== 'ANULADA' && (int) ($vigentes['total'] ?? 0) === 0;
         $row['detalle'] = Cast::rows(
             $detalle,
             ['id_detalle', 'id_cuenta_pagar', 'numero_linea'],
@@ -152,6 +159,52 @@ final class CuentaPagarRepository
         );
 
         return (int) ($rows[0]['id_cuenta_pagar'] ?? 0);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function update(int $id, array $data, int $userId): void
+    {
+        $detalle = json_encode($data['detalle'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        if ($detalle === false) {
+            $detalle = '[]';
+        }
+
+        Database::execute(
+            'EXEC dbo.sp_cuenta_pagar_modificar
+                 @id_cuenta_pagar = ?,
+                 @id_proveedor = ?,
+                 @numero_factura = ?,
+                 @fecha_emision = ?,
+                 @detalle = ?,
+                 @dias_credito = ?,
+                 @pct_descuento_pronto_pago = ?,
+                 @dias_descuento = ?,
+                 @codigo_erp = ?,
+                 @id_usuario = ?;',
+            [
+                $id,
+                (int) $data['id_proveedor'],
+                $data['numero_factura'],
+                $data['fecha_emision'],
+                $detalle,
+                $data['dias_credito'] ?? null,
+                $data['pct_descuento_pronto_pago'] ?? 0,
+                $data['dias_descuento'] ?? null,
+                $data['codigo_erp'] ?? null,
+                $userId,
+            ]
+        );
+    }
+
+    /**
+     * Pasa a VENCIDA las cuentas con saldo cuyo vencimiento ya pasó. Es idempotente y solo
+     * actualiza filas que cambian, así que se ejecuta antes de mostrar cuentas y panel.
+     */
+    public function refreshOverdue(): void
+    {
+        Database::call('EXEC dbo.sp_cuentas_actualizar_vencidas;');
     }
 
     public function annul(int $id, string $motivo, int $userId): void

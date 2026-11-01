@@ -35,6 +35,11 @@ final class MovimientoRepository
             $params[] = $tipo;
         }
 
+        if (($filters['id_banco'] ?? null) !== null) {
+            $where[] = 'id_banco = ?';
+            $params[] = (int) $filters['id_banco'];
+        }
+
         if (($filters['conciliado'] ?? null) !== null) {
             $where[] = 'conciliado = ?';
             $params[] = (int) $filters['conciliado'];
@@ -59,7 +64,7 @@ final class MovimientoRepository
         $offset = ($page - 1) * $perPage;
         $rows = Database::fetchAll(
             'SELECT id_movimiento, id_cuenta_pagar, numero_factura, id_proveedor, razon_social,
-                    numero_movimiento, fecha_movimiento, tipo_movimiento, monto, tipo_pago,
+                    numero_movimiento, fecha_movimiento, tipo_movimiento, monto, tipo_pago, id_banco,
                     referencia, descripcion, estado, conciliado, id_lote, id_programacion,
                     id_movimiento_origen, fecha_registro
              FROM dbo.vw_movimientos' . $whereSql . '
@@ -71,7 +76,7 @@ final class MovimientoRepository
         return [
             'items' => Cast::rows(
                 $rows,
-                ['id_movimiento', 'id_cuenta_pagar', 'id_proveedor', 'numero_movimiento', 'id_lote', 'id_programacion', 'id_movimiento_origen'],
+                ['id_movimiento', 'id_cuenta_pagar', 'id_proveedor', 'numero_movimiento', 'id_banco', 'id_lote', 'id_programacion', 'id_movimiento_origen'],
                 ['monto'],
                 ['conciliado']
             ),
@@ -174,6 +179,24 @@ final class MovimientoRepository
         );
 
         return Cast::rows($rows, ['id_lote', 'id_banco', 'cantidad_pagos'], ['monto_total']);
+    }
+
+    /**
+     * Concilia las líneas del extracto bancario con los pagos aprobados del banco.
+     *
+     * @param array<int, array{fecha: string, referencia: string, monto: float}> $lineas
+     * @return array<int, array<string, mixed>>
+     */
+    public function reconcile(int $idBanco, array $lineas, int $toleranciaDias, int $userId): array
+    {
+        $extracto = json_encode($lineas, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        $rows = Database::call(
+            'EXEC dbo.sp_conciliar_extracto @id_banco = ?, @extracto = ?, @tolerancia_dias = ?, @id_usuario = ?;',
+            [$idBanco, $extracto === false ? '[]' : $extracto, $toleranciaDias, $userId]
+        );
+
+        return Cast::rows($rows, ['linea', 'id_movimiento'], ['monto']);
     }
 
     public function changeLotState(int $id, string $estado, int $userId): void

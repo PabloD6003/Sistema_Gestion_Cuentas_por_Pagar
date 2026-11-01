@@ -172,6 +172,36 @@ final class Database
     }
 
     /**
+     * Ejecuta un procedimiento que devuelve varios conjuntos de resultados (por ejemplo,
+     * resumen y detalle) y los devuelve todos, en orden, omitiendo los que no tienen columnas.
+     *
+     * @param array<int, mixed> $params
+     * @return array<int, array<int, array<string, mixed>>>
+     */
+    public static function callSets(string $sql, array $params = []): array
+    {
+        $statement = self::run($sql, $params);
+        $sets = [];
+
+        do {
+            if ($statement->columnCount() > 0) {
+                $sets[] = $statement->fetchAll();
+            }
+
+            try {
+                $hasMore = $statement->nextRowset();
+            } catch (PDOException $e) {
+                if (str_contains(strtolower($e->getMessage()), 'invalid cursor state')) {
+                    break;
+                }
+                throw $e;
+            }
+        } while ($hasMore);
+
+        return $sets;
+    }
+
+    /**
      * @param array<int, mixed> $params
      */
     private static function run(string $sql, array $params): \PDOStatement

@@ -23,6 +23,7 @@ final class CuentaPagarController
     public function index(Request $request, array $params = []): Response
     {
         Auth::requireLogin();
+        $this->cuentas->refreshOverdue();
 
         $page = max(1, (int) ($request->query('page', 1)));
         $perPage = min(100, max(1, (int) ($request->query('per_page', 20))));
@@ -41,6 +42,7 @@ final class CuentaPagarController
     public function show(Request $request, array $params): Response
     {
         Auth::requireLogin();
+        $this->cuentas->refreshOverdue();
         $cuenta = $this->cuentas->find($this->id($params));
 
         if ($cuenta === null) {
@@ -60,6 +62,19 @@ final class CuentaPagarController
             'id_cuenta_pagar' => $id,
             'cuenta' => $this->cuentas->find($id),
         ], 201, ['Location' => '/api/cuentas/' . $id]);
+    }
+
+    public function update(Request $request, array $params): Response
+    {
+        $user = Auth::requireLogin();
+        $id = $this->id($params);
+        $data = $this->validated($request->json());
+        $this->cuentas->update($id, $data, (int) $user['id_usuario']);
+
+        return Response::json([
+            'id_cuenta_pagar' => $id,
+            'cuenta' => $this->cuentas->find($id),
+        ]);
     }
 
     public function annul(Request $request, array $params): Response

@@ -163,4 +163,48 @@ final class ProveedorRepository
             ]
         );
     }
+
+    /**
+     * @return array<int, array<string, mixed>>
+     */
+    public function evaluations(int $id): array
+    {
+        $rows = Database::fetchAll(
+            'SELECT id_evaluacion, id_proveedor, fecha_evaluacion, calificacion, comentario
+             FROM dbo.vw_evaluaciones_proveedor
+             WHERE id_proveedor = ?
+             ORDER BY fecha_evaluacion DESC, id_evaluacion DESC',
+            [$id]
+        );
+
+        return Cast::rows($rows, ['id_evaluacion', 'id_proveedor', 'calificacion']);
+    }
+
+    public function evaluate(int $id, int $calificacion, ?string $comentario, ?string $fecha, int $userId): void
+    {
+        Database::execute(
+            'EXEC dbo.sp_proveedor_evaluar @id_proveedor = ?, @calificacion = ?, @comentario = ?, @fecha = ?, @id_usuario = ?;',
+            [$id, $calificacion, $comentario, $fecha, $userId]
+        );
+    }
+
+    /**
+     * Resumen de la relación comercial y movimientos (sp_reporte_historial_proveedor).
+     *
+     * @return array{resumen: array<string, mixed>|null, movimientos: array<int, array<string, mixed>>}
+     */
+    public function history(int $id): array
+    {
+        $sets = Database::callSets('EXEC dbo.sp_reporte_historial_proveedor @id_proveedor = ?;', [$id]);
+        $resumen = $sets[0][0] ?? null;
+
+        return [
+            'resumen' => $resumen === null ? null : Cast::row(
+                $resumen,
+                ['dias_credito', 'cuentas_registradas'],
+                ['monto_facturado', 'saldo_pendiente', 'total_pagado', 'descuentos_obtenidos', 'calificacion_promedio']
+            ),
+            'movimientos' => Cast::rows($sets[1] ?? [], ['id_movimiento', 'numero_movimiento'], ['monto'], ['conciliado']),
+        ];
+    }
 }

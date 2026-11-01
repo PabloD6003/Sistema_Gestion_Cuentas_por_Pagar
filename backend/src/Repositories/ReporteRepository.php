@@ -72,6 +72,25 @@ final class ReporteRepository
     }
 
     /**
+     * Flujo de caja proyectado desde el OLTP (al día, no depende del ETL).
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function flujoCaja(string $desde, string $hasta, string $agrupacion): array
+    {
+        $rows = Database::call(
+            'EXEC dbo.sp_reporte_flujo_caja @desde = ?, @hasta = ?, @agrupacion = ?;',
+            [$desde, $hasta, $agrupacion]
+        );
+
+        return Cast::rows(
+            $rows,
+            [],
+            ['cuentas_vencidas', 'cuentas_por_pagar', 'pagos_programados', 'total_periodo', 'total_acumulado']
+        );
+    }
+
+    /**
      * @return array<string, mixed>|null
      */
     public function etlUltimaCarga(): ?array
