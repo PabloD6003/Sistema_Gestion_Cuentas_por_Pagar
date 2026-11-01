@@ -1,4 +1,4 @@
-/* =====================================================================================
+﻿/* =====================================================================================
    Capa de lectura para la aplicación.
    Solo se exponen vistas; las tablas base siguen sin SELECT para los roles de la app.
    Ejecutar después de 01_correcciones.sql.

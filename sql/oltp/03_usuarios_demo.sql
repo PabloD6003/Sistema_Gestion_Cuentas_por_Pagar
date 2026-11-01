@@ -1,4 +1,4 @@
-/* =====================================================================================
+﻿/* =====================================================================================
    Usuarios demo para pruebas locales.
    Requiere haber ejecutado 00_base.sql, 01_correcciones.sql y 02_lectura.sql.
    No usar estas credenciales en produccion.
