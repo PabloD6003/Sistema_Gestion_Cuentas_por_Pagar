@@ -61,7 +61,9 @@ $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
                             <?php endif; ?>
                         </td>
                         <td>
-                            <?php if ($canApproveRow && $movEstado === 'REGISTRADO'): ?>
+                            <?php if ($isDiscount && $movEstado === 'REGISTRADO'): ?>
+                                <span class="is-size-7 has-text-grey">Se aprueba con el pago</span>
+                            <?php elseif ($canApproveRow && $movEstado === 'REGISTRADO'): ?>
                                 <form method="post" action="/pagos/<?= $movId ?>/aprobar">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="return_to" value="/pagos">
