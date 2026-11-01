@@ -24,6 +24,10 @@ Ejecute los scripts con `sqlcmd` (o desde SSMS) en el orden indicado. Todos los 
    - Crea los usuarios de prueba `admin`, `tesorero` y `contador`.
    - Es idempotente: si un usuario ya existe, lo omite.
    - No usar estas credenciales en producción.
+5. `oltp/04_consultas.sql`
+   - Crea los procedimientos de consulta que usa la API (listados, detalles, catálogos, panel y perfil).
+   - Leen las vistas de `02_lectura.sql`; la API ya no hace `SELECT` directos.
+   - Otorga `EXECUTE` a los roles de la aplicación. Es idempotente.
 
 ### Data Warehouse
 
@@ -44,6 +48,8 @@ Ejecute los scripts con `sqlcmd` (o desde SSMS) en el orden indicado. Todos los 
 6. `dw/05_validacion.sql`
    - Ejecuta controles de calidad e idempotencia del DW.
    - Confirme visualmente que todos los controles devuelvan `OK`.
+7. `dw/06_consultas.sql`
+   - Crea los procedimientos `rpt.sp_*` que usa la API para los reportes del DW. Es idempotente.
 
 La carga puede repetirse; el ETL está diseñado para ser idempotente.
 
@@ -54,6 +60,7 @@ sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\00_base.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\01_correcciones.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\02_lectura.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\03_usuarios_demo.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\04_consultas.sql
 
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\01_schema_dw.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\02_dim_tiempo.sql
@@ -61,6 +68,7 @@ sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\03_etl.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -Q "USE CuentasPorPagarDW; EXEC etl.sp_ejecutar_todo;"
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\04_views.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\05_validacion.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\06_consultas.sql
 ```
 
 Si usa autenticación SQL, reemplace `-E` por `-U <usuario> -P <contraseña>`.
