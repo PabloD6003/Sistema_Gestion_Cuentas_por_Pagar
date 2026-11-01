@@ -15,49 +15,25 @@ final class CuentaPagarRepository
      */
     public function paginate(array $filters, int $page, int $perPage): array
     {
-        $where = [];
-        $params = [];
-
         $q = trim((string) ($filters['q'] ?? ''));
-        if ($q !== '') {
-            $where[] = '(numero_factura LIKE ? OR razon_social LIKE ?)';
-            $params[] = '%' . $q . '%';
-            $params[] = '%' . $q . '%';
-        }
-
         $estado = $filters['estado'] ?? null;
-        if (is_string($estado) && $estado !== '') {
-            $where[] = 'estado = ?';
-            $params[] = $estado;
-        }
+        $idProveedor = $filters['id_proveedor'] ?? null;
 
-        if (($filters['id_proveedor'] ?? null) !== null) {
-            $where[] = 'id_proveedor = ?';
-            $params[] = (int) $filters['id_proveedor'];
-        }
-
-        if (($filters['vencidas'] ?? false) === true) {
-            $where[] = 'dias_vencido > 0 AND saldo_pendiente > 0 AND estado <> ?';
-            $params[] = 'ANULADA';
-        }
-
-        $whereSql = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
-
-        $totalRow = Database::fetchOne(
-            'SELECT COUNT(*) AS total FROM dbo.vw_cuentas_por_pagar' . $whereSql,
-            $params
+        // Devuelve dos conjuntos: el total y la página
+        $sets = Database::callSets(
+            'EXEC dbo.sp_cuentas_listar @buscar = ?, @estado = ?, @id_proveedor = ?, @solo_vencidas = ?,
+                  @pagina = ?, @por_pagina = ?;',
+            [
+                $q === '' ? null : $q,
+                is_string($estado) && $estado !== '' ? $estado : null,
+                $idProveedor === null ? null : (int) $idProveedor,
+                ($filters['vencidas'] ?? false) === true ? 1 : 0,
+                $page,
+                $perPage,
+            ]
         );
-        $total = (int) ($totalRow['total'] ?? 0);
-
-        $offset = ($page - 1) * $perPage;
-        $rows = Database::fetchAll(
-            'SELECT id_cuenta_pagar, id_proveedor, razon_social, numero_factura, fecha_emision,
-                    fecha_vencimiento, monto_total, saldo_pendiente, estado, estado_nombre, dias_vencido
-             FROM dbo.vw_cuentas_por_pagar' . $whereSql . '
-             ORDER BY fecha_vencimiento ASC, id_cuenta_pagar DESC
-             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY',
-            array_merge($params, [$offset, $perPage])
-        );
+        $total = (int) ($sets[0][0]['total'] ?? 0);
+        $rows = $sets[1] ?? [];
 
         return [
             'items' => Cast::rows(
@@ -77,40 +53,22 @@ final class CuentaPagarRepository
      */
     public function find(int $id): ?array
     {
-        $row = Database::fetchOne(
-            'SELECT id_cuenta_pagar, id_proveedor, razon_social, numero_factura, fecha_emision,
-                    fecha_vencimiento, dias_credito, pct_descuento_pronto_pago, fecha_limite_descuento,
-                    subtotal, monto_impuesto, monto_total, saldo_pendiente, estado, estado_nombre,
-                    dias_vencido, fecha_registro, codigo_erp
-             FROM dbo.vw_cuentas_por_pagar WHERE id_cuenta_pagar = ?',
-            [$id]
-        );
+        // Devuelve dos conjuntos: el encabezado (con la marca editable) y las líneas
+        $sets = Database::callSets('EXEC dbo.sp_cuenta_pagar_obtener @id_cuenta_pagar = ?;', [$id]);
+        $row = $sets[0][0] ?? null;
 
         if ($row === null) {
             return null;
         }
 
-        $detalle = Database::fetchAll(
-            'SELECT id_detalle, id_cuenta_pagar, numero_linea, descripcion, cantidad,
-                    precio_unitario, pct_impuesto, monto_impuesto, total_linea
-             FROM dbo.vw_cuentas_por_pagar_detalle
-             WHERE id_cuenta_pagar = ?
-             ORDER BY numero_linea',
-            [$id]
-        );
+        $detalle = $sets[1] ?? [];
 
         $row = Cast::row(
             $row,
             ['id_cuenta_pagar', 'id_proveedor', 'dias_credito', 'dias_vencido'],
-            ['pct_descuento_pronto_pago', 'subtotal', 'monto_impuesto', 'monto_total', 'saldo_pendiente']
+            ['pct_descuento_pronto_pago', 'subtotal', 'monto_impuesto', 'monto_total', 'saldo_pendiente'],
+            ['editable']
         );
-
-        // Se puede modificar mientras no esté anulada ni tenga movimientos vigentes
-        $vigentes = Database::fetchOne(
-            "SELECT COUNT(*) AS total FROM dbo.vw_movimientos WHERE id_cuenta_pagar = ? AND estado <> 'ANULADO'",
-            [$id]
-        );
-        $row['editable'] = $row['estado'] !== 'ANULADA' && (int) ($vigentes['total'] ?? 0) === 0;
         $row['detalle'] = Cast::rows(
             $detalle,
             ['id_detalle', 'id_cuenta_pagar', 'numero_linea'],

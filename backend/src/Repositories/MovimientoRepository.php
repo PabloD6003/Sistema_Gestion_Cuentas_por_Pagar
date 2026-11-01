@@ -15,63 +15,28 @@ final class MovimientoRepository
      */
     public function paginate(array $filters, int $page, int $perPage): array
     {
-        $where = [];
-        $params = [];
-
-        if (($filters['id_cuenta_pagar'] ?? null) !== null) {
-            $where[] = 'id_cuenta_pagar = ?';
-            $params[] = (int) $filters['id_cuenta_pagar'];
-        }
-
         $estado = $filters['estado'] ?? null;
-        if (is_string($estado) && $estado !== '') {
-            $where[] = 'estado = ?';
-            $params[] = $estado;
-        }
-
         $tipo = $filters['tipo'] ?? null;
-        if (is_string($tipo) && $tipo !== '') {
-            $where[] = 'tipo_movimiento = ?';
-            $params[] = $tipo;
-        }
-
-        if (($filters['id_banco'] ?? null) !== null) {
-            $where[] = 'id_banco = ?';
-            $params[] = (int) $filters['id_banco'];
-        }
-
-        if (($filters['conciliado'] ?? null) !== null) {
-            $where[] = 'conciliado = ?';
-            $params[] = (int) $filters['conciliado'];
-        }
-
         $q = trim((string) ($filters['q'] ?? ''));
-        if ($q !== '') {
-            $where[] = '(numero_factura LIKE ? OR razon_social LIKE ? OR referencia LIKE ?)';
-            $params[] = '%' . $q . '%';
-            $params[] = '%' . $q . '%';
-            $params[] = '%' . $q . '%';
-        }
+        $optionalInt = static fn (string $key): ?int => ($filters[$key] ?? null) === null ? null : (int) $filters[$key];
 
-        $whereSql = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
-
-        $totalRow = Database::fetchOne(
-            'SELECT COUNT(*) AS total FROM dbo.vw_movimientos' . $whereSql,
-            $params
+        // Devuelve dos conjuntos: el total y la página
+        $sets = Database::callSets(
+            'EXEC dbo.sp_movimientos_listar @id_cuenta_pagar = ?, @estado = ?, @tipo = ?, @id_banco = ?,
+                  @conciliado = ?, @buscar = ?, @pagina = ?, @por_pagina = ?;',
+            [
+                $optionalInt('id_cuenta_pagar'),
+                is_string($estado) && $estado !== '' ? $estado : null,
+                is_string($tipo) && $tipo !== '' ? $tipo : null,
+                $optionalInt('id_banco'),
+                $optionalInt('conciliado'),
+                $q === '' ? null : $q,
+                $page,
+                $perPage,
+            ]
         );
-        $total = (int) ($totalRow['total'] ?? 0);
-
-        $offset = ($page - 1) * $perPage;
-        $rows = Database::fetchAll(
-            'SELECT id_movimiento, id_cuenta_pagar, numero_factura, id_proveedor, razon_social,
-                    numero_movimiento, fecha_movimiento, tipo_movimiento, monto, tipo_pago, id_banco,
-                    referencia, descripcion, estado, conciliado, id_lote, id_programacion,
-                    id_movimiento_origen, fecha_registro
-             FROM dbo.vw_movimientos' . $whereSql . '
-             ORDER BY fecha_movimiento DESC, id_movimiento DESC
-             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY',
-            array_merge($params, [$offset, $perPage])
-        );
+        $total = (int) ($sets[0][0]['total'] ?? 0);
+        $rows = $sets[1] ?? [];
 
         return [
             'items' => Cast::rows(
@@ -170,13 +135,7 @@ final class MovimientoRepository
      */
     public function lots(int $limit = 100): array
     {
-        $rows = Database::fetchAll(
-            'SELECT TOP (?) id_lote, id_banco, nombre_banco, fecha_envio, cantidad_pagos,
-                    monto_total, estado, estado_nombre
-             FROM dbo.vw_lotes
-             ORDER BY id_lote DESC',
-            [$limit]
-        );
+        $rows = Database::call('EXEC dbo.sp_lotes_listar @maximo = ?;', [$limit]);
 
         return Cast::rows($rows, ['id_lote', 'id_banco', 'cantidad_pagos'], ['monto_total']);
     }

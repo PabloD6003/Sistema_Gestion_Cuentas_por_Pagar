@@ -69,6 +69,7 @@ sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\00_base.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\01_correcciones.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\02_lectura.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\03_usuarios_demo.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\04_consultas.sql
 ```
 
 Luego cargue el Data Warehouse:
@@ -80,7 +81,10 @@ sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\dw\03_etl.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -Q "USE CuentasPorPagarDW; EXEC etl.sp_ejecutar_todo;"
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\dw\04_views.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\dw\05_validacion.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\dw\06_consultas.sql
 ```
+
+La API no ejecuta `SELECT` directos: todas las lecturas pasan por los procedimientos de `sql/oltp/04_consultas.sql` y `sql/dw/06_consultas.sql`, y todas las escrituras por los procedimientos de `00_base.sql` y `01_correcciones.sql`. Si ya tenía la base creada, basta con ejecutar esos dos scripts.
 
 El script `03_etl.sql` solo crea los procedimientos. La carga ocurre al ejecutar `etl.sp_ejecutar_todo`. Los reportes del sistema no muestran datos hasta que se ejecuta esa carga.
 

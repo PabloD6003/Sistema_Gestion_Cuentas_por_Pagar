@@ -15,39 +15,16 @@ final class ProveedorRepository
      */
     public function paginate(array $filters, int $page, int $perPage): array
     {
-        $where = [];
-        $params = [];
-
         $q = trim((string) ($filters['q'] ?? ''));
-        if ($q !== '') {
-            $where[] = '(razon_social LIKE ? OR identificacion_tributaria LIKE ?)';
-            $params[] = '%' . $q . '%';
-            $params[] = '%' . $q . '%';
-        }
+        $estado = $filters['estado'] ?? null;
 
-        if (($filters['estado'] ?? null) !== null) {
-            $where[] = 'estado = ?';
-            $params[] = (int) $filters['estado'];
-        }
-
-        $whereSql = $where === [] ? '' : ' WHERE ' . implode(' AND ', $where);
-
-        $totalRow = Database::fetchOne(
-            'SELECT COUNT(*) AS total FROM dbo.vw_proveedores' . $whereSql,
-            $params
+        // Devuelve dos conjuntos: el total y la página
+        $sets = Database::callSets(
+            'EXEC dbo.sp_proveedores_listar @buscar = ?, @estado = ?, @pagina = ?, @por_pagina = ?;',
+            [$q === '' ? null : $q, $estado === null ? null : (int) $estado, $page, $perPage]
         );
-        $total = (int) ($totalRow['total'] ?? 0);
-
-        $offset = ($page - 1) * $perPage;
-        $rows = Database::fetchAll(
-            'SELECT id_proveedor, identificacion_tributaria, razon_social, nombre_comercial, pais,
-                    direccion, telefono, correo, contacto_nombre, dias_credito, banco,
-                    cuenta_bancaria, estado, fecha_registro, codigo_erp, calificacion_promedio, evaluaciones
-             FROM dbo.vw_proveedores' . $whereSql . '
-             ORDER BY razon_social
-             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY',
-            array_merge($params, [$offset, $perPage])
-        );
+        $total = (int) ($sets[0][0]['total'] ?? 0);
+        $rows = $sets[1] ?? [];
 
         return [
             'items' => Cast::rows($rows, ['id_proveedor', 'dias_credito', 'evaluaciones'], ['calificacion_promedio'], ['estado']),
@@ -63,13 +40,7 @@ final class ProveedorRepository
      */
     public function find(int $id): ?array
     {
-        $row = Database::fetchOne(
-            'SELECT id_proveedor, identificacion_tributaria, razon_social, nombre_comercial, pais,
-                    direccion, telefono, correo, contacto_nombre, dias_credito, banco,
-                    cuenta_bancaria, estado, fecha_registro, codigo_erp, calificacion_promedio, evaluaciones
-             FROM dbo.vw_proveedores WHERE id_proveedor = ?',
-            [$id]
-        );
+        $row = Database::call('EXEC dbo.sp_proveedor_obtener @id_proveedor = ?;', [$id])[0] ?? null;
 
         return $row === null ? null : Cast::row($row, ['id_proveedor', 'dias_credito', 'evaluaciones'], ['calificacion_promedio'], ['estado']);
     }
@@ -169,13 +140,7 @@ final class ProveedorRepository
      */
     public function evaluations(int $id): array
     {
-        $rows = Database::fetchAll(
-            'SELECT id_evaluacion, id_proveedor, fecha_evaluacion, calificacion, comentario
-             FROM dbo.vw_evaluaciones_proveedor
-             WHERE id_proveedor = ?
-             ORDER BY fecha_evaluacion DESC, id_evaluacion DESC',
-            [$id]
-        );
+        $rows = Database::call('EXEC dbo.sp_proveedor_evaluaciones @id_proveedor = ?;', [$id]);
 
         return Cast::rows($rows, ['id_evaluacion', 'id_proveedor', 'calificacion']);
     }

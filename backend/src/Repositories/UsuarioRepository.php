@@ -39,14 +39,7 @@ final class UsuarioRepository
      */
     public function profile(int $id): ?array
     {
-        $row = Database::fetchOne(
-            'SELECT u.id_usuario, u.id_rol, u.rol, u.nombre_usuario, u.nombre_completo,
-                    u.correo, u.estado, r.puede_aprobar_pagos, r.nivel_acceso
-             FROM dbo.vw_usuarios u
-             JOIN dbo.vw_roles r ON r.id_rol = u.id_rol
-             WHERE u.id_usuario = ?',
-            [$id]
-        );
+        $row = Database::call('EXEC dbo.sp_usuario_perfil @id_usuario = ?;', [$id])[0] ?? null;
 
         if ($row === null) {
             return null;

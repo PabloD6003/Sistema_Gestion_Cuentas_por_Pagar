@@ -14,32 +14,11 @@ final class CatalogoRepository
      */
     public function all(): array
     {
-        $bancos = Database::fetchAll(
-            'SELECT id_banco, nombre_banco, numero_cuenta, estado FROM dbo.vw_bancos ORDER BY nombre_banco'
-        );
-
-        $tiposPago = Database::fetchAll(
-            'SELECT id_tipo_pago, nombre, id_metodo_pago, metodo_pago, id_banco, nombre_banco,
-                    requiere_banco, estado
-             FROM dbo.vw_tipos_pago
-             WHERE estado = 1
-             ORDER BY nombre, nombre_banco'
-        );
-
-        $estados = Database::fetchAll(
-            'SELECT id_estado, ambito, codigo, nombre FROM dbo.vw_catalogos_estado ORDER BY ambito, nombre'
-        );
-
-        $roles = Database::fetchAll(
-            'SELECT id_rol, nombre, descripcion, nivel_acceso, puede_aprobar_pagos, estado
-             FROM dbo.vw_roles WHERE estado = 1 ORDER BY nombre'
-        );
-
-        $metodos = Database::fetchAll(
-            'SELECT DISTINCT id_metodo_pago, metodo_pago AS nombre, requiere_banco
-             FROM dbo.vw_tipos_pago
-             WHERE metodo_pago IS NOT NULL
-             ORDER BY metodo_pago'
+        // Un solo procedimiento devuelve los cinco catálogos, en este orden
+        [$bancos, $tiposPago, $estados, $roles, $metodos] = array_pad(
+            Database::callSets('EXEC dbo.sp_catalogos_listar;'),
+            5,
+            []
         );
 
         return [
@@ -61,7 +40,7 @@ final class CatalogoRepository
      */
     public function dashboard(): array
     {
-        $row = Database::fetchOne('SELECT * FROM dbo.vw_dashboard_resumen') ?? [];
+        $row = Database::call('EXEC dbo.sp_dashboard_resumen;')[0] ?? [];
 
         return Cast::row(
             $row,
