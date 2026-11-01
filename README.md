@@ -60,22 +60,26 @@ Ejecute los scripts en este orden desde la raíz del repositorio. Ajuste `-S ".\
 
 > `sql/oltp/00_base.sql` recrea los objetos de la base. Úselo solo en un entorno de desarrollo o en una base que pueda reiniciarse.
 
+> `-f 65001` hace que `sqlcmd` lea los scripts como UTF-8. Sin esa opción las tildes de los textos (por ejemplo `'Nota de crédito'`) se guardan corruptas y el ETL deja de reconocer esos movimientos.
+
+> Si ya tiene la base creada, `01_correcciones.sql` y los scripts del DW se pueden volver a ejecutar sin perder datos para aplicar las correcciones más recientes.
+
 ```powershell
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\00_base.sql
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\01_correcciones.sql
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\02_lectura.sql
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\03_usuarios_demo.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\00_base.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\01_correcciones.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\02_lectura.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\03_usuarios_demo.sql
 ```
 
 Luego cargue el Data Warehouse:
 
 ```powershell
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\01_schema_dw.sql
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\02_dim_tiempo.sql
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\03_etl.sql
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -Q "USE CuentasPorPagarDW; EXEC etl.sp_ejecutar_todo;"
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\04_views.sql
-sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\05_validacion.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\dw\01_schema_dw.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\dw\02_dim_tiempo.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\dw\03_etl.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -Q "USE CuentasPorPagarDW; EXEC etl.sp_ejecutar_todo;"
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\dw\04_views.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\dw\05_validacion.sql
 ```
 
 El script `03_etl.sql` solo crea los procedimientos. La carga ocurre al ejecutar `etl.sp_ejecutar_todo`. Los reportes del sistema no muestran datos hasta que se ejecuta esa carga.
@@ -156,11 +160,26 @@ El script `03_usuarios_demo.sql` crea estas cuentas:
 
 Administrador y Tesorero pueden aprobar pagos; el Contador puede registrar facturas y pagos, pero no aprobarlos. Cambie estas contraseñas si va a publicar el sistema fuera de un entorno de prueba.
 
+## Respaldos
+
+El Administrador ve en el menú la opción **Respaldos**, con tres botones:
+
+| Botón | Qué hace |
+|---|---|
+| Respaldo completo | Copia toda la base `CuentasPorPagarDB`. Es el punto de partida de los demás. |
+| Respaldo diferencial | Copia solo los cambios desde el último respaldo completo. |
+| Respaldo de log | Respaldo incremental del registro de transacciones (la base usa el modelo de recuperación FULL). |
+
+Cada respaldo se verifica con `RESTORE VERIFYONLY`, queda en la bitácora de auditoría y aparece en el historial de la misma pantalla. Los archivos se guardan en la carpeta de respaldos de la instancia de SQL Server; para usar otra carpeta del servidor, indíquela en `BACKUP_PATH` dentro de `backend/.env`.
+
+La cuenta con la que la API se conecta a SQL Server necesita permiso para respaldar (`db_backupoperator`) y para verificar el archivo (`CREATE DATABASE`). Con autenticación de Windows en un equipo de desarrollo normalmente ya los tiene.
+
 ## Pruebas
 
 ```powershell
 php backend/tests/router_test.php
 php backend/tests/validator_test.php
+php backend/tests/sql_error_test.php
 php frontend/tests/router_test.php
 php frontend/tests/format_test.php
 ```
