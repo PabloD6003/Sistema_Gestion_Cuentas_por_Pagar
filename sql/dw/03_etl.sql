@@ -414,6 +414,11 @@ BEGIN
     SET @id_ejecucion = SCOPE_IDENTITY();
 
     BEGIN TRY
+        -- Las cuentas que vencieron desde la última carga pasan a VENCIDA antes de copiarlas
+        DECLARE @vencidas TABLE (cuentas_vencidas INT);
+        INSERT INTO @vencidas
+        EXEC CuentasPorPagarDB.dbo.sp_cuentas_actualizar_vencidas @fecha_corte = @fecha_corte;
+
         EXEC etl.sp_cargar_dim_estado;
         EXEC etl.sp_cargar_dim_tipo_movimiento;
         EXEC etl.sp_cargar_dim_tipo_pago;

@@ -14,7 +14,7 @@ use App\View;
 
 final class ReporteController
 {
-    private const TIPOS = ['aging', 'pagos', 'cumplimiento', 'saldos', 'etl'];
+    private const TIPOS = ['aging', 'pagos', 'cumplimiento', 'saldos', 'flujo', 'etl'];
 
     public function index(Request $request, array $params = []): Response
     {
@@ -39,20 +39,34 @@ final class ReporteController
             throw new HttpException('Reporte no encontrado.', 404);
         }
 
-        [$html] = $this->content($tipo);
+        [$html] = $this->content($tipo, [
+            'desde' => (string) $request->query('desde', ''),
+            'hasta' => (string) $request->query('hasta', ''),
+            'agrupacion' => (string) $request->query('agrupacion', ''),
+        ]);
 
         return Response::html($html);
     }
 
     /**
+     * @param array<string, string> $query
      * @return array{0: string, 1: string|null}
      */
-    private function content(string $tipo): array
+    private function content(string $tipo, array $query = []): array
     {
         try {
             $api = ApiClient::forSession();
 
-            if ($tipo === 'etl') {
+            if ($tipo === 'flujo') {
+                // Proyección desde el OLTP: no depende de la última carga del ETL
+                $response = $api->get('/api/reportes/flujo-caja?' . http_build_query(array_filter($query)));
+                $html = View::render('reportes/_flujo', [
+                    'items' => $response['items'] ?? [],
+                    'desde' => $response['desde'] ?? '',
+                    'hasta' => $response['hasta'] ?? '',
+                    'agrupacion' => $response['agrupacion'] ?? 'SEMANA',
+                ], null);
+            } elseif ($tipo === 'etl') {
                 $response = $api->get('/api/reportes/etl');
                 $html = View::render('reportes/_etl', [
                     'etl' => $response['data'] ?? null,

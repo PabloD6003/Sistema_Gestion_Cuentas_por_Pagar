@@ -83,6 +83,7 @@ SELECT m.id_movimiento,
        m.monto,
        m.id_tipo_pago,
        tp.nombre AS tipo_pago,
+       tp.id_banco,
        m.referencia,
        m.descripcion,
        m.id_estado,
@@ -261,4 +262,23 @@ GRANT SELECT ON dbo.vw_lotes                   TO rol_cxp_auditoria;
 GRANT SELECT ON dbo.vw_notificaciones          TO rol_cxp_auditoria;
 GRANT SELECT ON dbo.vw_catalogos_estado        TO rol_cxp_auditoria;
 GRANT SELECT ON dbo.vw_dashboard_resumen       TO rol_cxp_auditoria;
+GO
+
+/* -------------------------------------------------------------------------------------
+   Evaluaciones de proveedores (RF-07) con el promedio vigente del proveedor.
+   ------------------------------------------------------------------------------------- */
+CREATE OR ALTER VIEW dbo.vw_evaluaciones_proveedor
+AS
+SELECT ev.id_evaluacion,
+       ev.id_proveedor,
+       p.razon_social,
+       ev.fecha_evaluacion,
+       ev.calificacion,
+       ev.comentario
+FROM dbo.CP19_evaluaciones_proveedor ev
+JOIN dbo.CP01_proveedores p ON p.id_proveedor = ev.id_proveedor;
+GO
+
+GRANT SELECT ON dbo.vw_evaluaciones_proveedor  TO rol_cxp_operacion;
+GRANT SELECT ON dbo.vw_evaluaciones_proveedor  TO rol_cxp_auditoria;
 GO

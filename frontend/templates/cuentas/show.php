@@ -26,6 +26,9 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
     <div class="level-right">
         <div class="buttons">
             <a class="button is-light" href="/cuentas">Volver</a>
+            <?php if (!empty($cuenta['editable'])): ?>
+                <a class="button is-link is-light" href="/cuentas/<?= $id ?>/editar">Modificar</a>
+            <?php endif; ?>
             <?php if ($canApprove && $estado !== 'ANULADA'): ?>
                 <form method="post" action="/cuentas/<?= $id ?>/anular" class="action-form" onsubmit="return confirm('¿Anular esta factura? Esta acción no se puede deshacer.');">
                     <?= csrf_field() ?>

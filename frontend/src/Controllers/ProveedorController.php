@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\ApiClient;
 use App\ApiException;
 use App\Auth;
+use App\Http\HttpException;
 use App\Http\Request;
 use App\Http\Response;
 use App\View;
@@ -70,6 +71,76 @@ final class ProveedorController
             'old' => $old,
             'error' => $error,
         ]), 422);
+    }
+
+    public function show(Request $request, array $params = []): Response
+    {
+        Auth::requireLogin();
+        $id = $this->id($params);
+        $api = ApiClient::forSession();
+
+        try {
+            $proveedor = $api->get('/api/proveedores/' . $id);
+        } catch (ApiException $exception) {
+            if ($exception->statusCode() === 404) {
+                throw new HttpException('Proveedor no encontrado.', 404);
+            }
+            throw $exception;
+        }
+
+        $historial = $api->get('/api/proveedores/' . $id . '/historial');
+        $evaluaciones = $api->get('/api/proveedores/' . $id . '/evaluaciones');
+
+        return Response::html(View::render('proveedores/show', [
+            'pageTitle' => (string) ($proveedor['razon_social'] ?? 'Proveedor'),
+            'proveedor' => $proveedor,
+            'resumen' => $historial['resumen'] ?? null,
+            'movimientos' => $historial['movimientos'] ?? [],
+            'evaluaciones' => $evaluaciones['items'] ?? [],
+        ]));
+    }
+
+    public function evaluar(Request $request, array $params = []): Response
+    {
+        Auth::requireLogin();
+        $id = $this->id($params);
+        $calificacion = (int) ($request->post('calificacion') ?? 0);
+
+        if ($calificacion < 1 || $calificacion > 5) {
+            flash('error', 'Seleccione una calificación de 1 a 5.');
+            return Response::redirect('/proveedores/' . $id);
+        }
+
+        try {
+            ApiClient::forSession()->post('/api/proveedores/' . $id . '/evaluaciones', [
+                'calificacion' => $calificacion,
+                'comentario' => trim((string) ($request->post('comentario') ?? '')),
+                'fecha_evaluacion' => trim((string) ($request->post('fecha_evaluacion') ?? '')),
+            ]);
+            flash('success', 'Evaluación registrada.');
+        } catch (ApiException $exception) {
+            if ($exception->statusCode() === 401) {
+                throw $exception;
+            }
+
+            flash('error', $exception->getMessage());
+        }
+
+        return Response::redirect('/proveedores/' . $id);
+    }
+
+    /**
+     * @param array<string, string> $params
+     */
+    private function id(array $params): int
+    {
+        $id = (int) ($params['id'] ?? 0);
+
+        if ($id <= 0) {
+            throw new HttpException('Identificador inválido.', 404);
+        }
+
+        return $id;
     }
 
     /**

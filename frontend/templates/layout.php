@@ -13,6 +13,10 @@ $navItems = [
     ['path' => '/reportes', 'label' => 'Reportes', 'hint' => 'Data Warehouse'],
 ];
 
+if (\App\Auth::canApprove()) {
+    array_splice($navItems, 4, 0, [['path' => '/tesoreria', 'label' => 'Tesorería', 'hint' => 'Lotes y conciliación']]);
+}
+
 if (\App\Auth::isAdmin()) {
     $navItems[] = ['path' => '/respaldos', 'label' => 'Respaldos', 'hint' => 'Copias de seguridad'];
 }

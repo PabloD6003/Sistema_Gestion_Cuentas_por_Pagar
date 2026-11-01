@@ -27,6 +27,7 @@ final class MovimientoController
         $page = max(1, (int) ($request->query('page', 1)));
         $perPage = min(100, max(1, (int) ($request->query('per_page', 20))));
         $cuenta = $request->query('id_cuenta_pagar');
+        $banco = $request->query('id_banco');
         $conciliado = $request->query('conciliado');
         $conciliadoFilter = null;
 
@@ -36,6 +37,7 @@ final class MovimientoController
 
         return Response::json($this->movimientos->paginate([
             'id_cuenta_pagar' => is_numeric($cuenta) ? (int) $cuenta : null,
+            'id_banco' => is_numeric($banco) ? (int) $banco : null,
             'estado' => $request->query('estado'),
             'tipo' => $request->query('tipo'),
             'conciliado' => $conciliadoFilter,
@@ -123,6 +125,45 @@ final class MovimientoController
         return Response::json([
             'id_lote' => $idLote,
         ], 201, ['Location' => '/api/lotes/' . $idLote]);
+    }
+
+    public function conciliar(Request $request, array $params = []): Response
+    {
+        $user = Auth::requireApprove();
+        $data = $request->json();
+        Validator::required($data, ['id_banco', 'lineas']);
+
+        $entrada = Validator::array($data['lineas'], 'lineas');
+        if (count($entrada) > 500) {
+            throw Validator::invalid('lineas', 'El extracto no puede superar 500 líneas.');
+        }
+
+        $lineas = [];
+        foreach ($entrada as $index => $linea) {
+            $numero = (int) $index + 1;
+            if (!is_array($linea)) {
+                throw Validator::invalid('lineas', "La línea {$numero} no es válida.");
+            }
+
+            Validator::required($linea, ['fecha', 'referencia', 'monto']);
+            $lineas[] = [
+                'fecha' => Validator::date($linea['fecha'], "lineas[{$numero}].fecha"),
+                'referencia' => Validator::string($linea['referencia'], "lineas[{$numero}].referencia", 50),
+                'monto' => Validator::decimal($linea['monto'], "lineas[{$numero}].monto", 0.01),
+            ];
+        }
+
+        $resultado = $this->movimientos->reconcile(
+            Validator::int($data['id_banco'], 'id_banco', 1),
+            $lineas,
+            Validator::int($data['tolerancia_dias'] ?? 3, 'tolerancia_dias', 0, 30),
+            (int) $user['id_usuario']
+        );
+
+        return Response::json([
+            'items' => $resultado,
+            'conciliados' => count(array_filter($resultado, static fn (array $r): bool => $r['id_movimiento'] !== null)),
+        ]);
     }
 
     public function cambiarEstadoLote(Request $request, array $params): Response

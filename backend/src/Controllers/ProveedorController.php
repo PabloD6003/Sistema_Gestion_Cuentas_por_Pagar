@@ -51,6 +51,44 @@ final class ProveedorController
         return Response::json($proveedor);
     }
 
+    public function evaluaciones(Request $request, array $params): Response
+    {
+        Auth::requireLogin();
+        $id = $this->existing($params);
+
+        return Response::json(['items' => $this->proveedores->evaluations($id)]);
+    }
+
+    public function evaluar(Request $request, array $params): Response
+    {
+        $user = Auth::requireLogin();
+        $id = $this->existing($params);
+        $data = $request->json();
+        Validator::required($data, ['calificacion']);
+
+        $fecha = null;
+        if (isset($data['fecha_evaluacion']) && $data['fecha_evaluacion'] !== '') {
+            $fecha = Validator::notFuture(Validator::date($data['fecha_evaluacion'], 'fecha_evaluacion'), 'fecha_evaluacion');
+        }
+
+        $this->proveedores->evaluate(
+            $id,
+            Validator::int($data['calificacion'], 'calificacion', 1, 5),
+            Validator::string($data['comentario'] ?? null, 'comentario', 250, false),
+            $fecha,
+            (int) $user['id_usuario']
+        );
+
+        return Response::json(['items' => $this->proveedores->evaluations($id)], 201);
+    }
+
+    public function historial(Request $request, array $params): Response
+    {
+        Auth::requireLogin();
+
+        return Response::json($this->proveedores->history($this->existing($params)));
+    }
+
     public function store(Request $request, array $params = []): Response
     {
         $user = Auth::requireLogin();
@@ -113,6 +151,19 @@ final class ProveedorController
             'estado' => Validator::bool($data['estado'] ?? true, true) ? 1 : 0,
             'codigo_erp' => Validator::string($data['codigo_erp'] ?? null, 'codigo_erp', 50, false),
         ];
+    }
+
+    /**
+     * @param array<string, string> $params
+     */
+    private function existing(array $params): int
+    {
+        $id = $this->id($params);
+        if ($this->proveedores->find($id) === null) {
+            throw new HttpException('Proveedor no encontrado.', 404);
+        }
+
+        return $id;
     }
 
     /**

@@ -18,6 +18,7 @@
             <li><a href="/reportes" class="reporte-tab" data-tipo="pagos" hx-get="/partials/reportes/pagos" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Pagos por mes</a></li>
             <li><a href="/reportes" class="reporte-tab" data-tipo="cumplimiento" hx-get="/partials/reportes/cumplimiento" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Cumplimiento</a></li>
             <li><a href="/reportes" class="reporte-tab" data-tipo="saldos" hx-get="/partials/reportes/saldos" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Saldos por proveedor</a></li>
+            <li><a href="/reportes" class="reporte-tab" data-tipo="flujo" hx-get="/partials/reportes/flujo" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Flujo de caja</a></li>
             <li><a href="/reportes" class="reporte-tab" data-tipo="etl" hx-get="/partials/reportes/etl" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Estado ETL</a></li>
         </ul>
     </div>

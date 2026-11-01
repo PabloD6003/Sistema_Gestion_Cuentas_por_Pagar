@@ -738,3 +738,197 @@ GO
    ------------------------------------------------------------------------------------- */
 GRANT EXECUTE ON dbo.sp_pago_anular TO rol_cxp_tesoreria;
 GO
+
+/* -------------------------------------------------------------------------------------
+   13. Modificación de cuentas por pagar (RF-01).
+   - Solo se modifican cuentas sin movimientos vigentes (registrados o aprobados) y no
+     anuladas: una vez que hay pagos, el monto y el detalle quedan fijos.
+   - Recalcula totales, vencimiento, saldo y estado con las mismas reglas del registro.
+   - El cambio queda en la bitácora mediante el trigger de CP04 y un registro del detalle.
+   ------------------------------------------------------------------------------------- */
+CREATE OR ALTER PROCEDURE dbo.sp_cuenta_pagar_modificar
+    @id_cuenta_pagar           INT,
+    @id_proveedor              INT,
+    @numero_factura            VARCHAR(50),
+    @fecha_emision             DATE,
+    @detalle                   NVARCHAR(MAX),
+    @dias_credito              INT = NULL,
+    @pct_descuento_pronto_pago DECIMAL(5,2) = 0,
+    @dias_descuento            INT = NULL,
+    @codigo_erp                VARCHAR(50) = NULL,
+    @id_usuario                INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    EXEC dbo.sp_contexto_usuario @id_usuario;
+
+    DECLARE @estado VARCHAR(20) = (SELECT e.codigo FROM dbo.CP04_cuentas_por_pagar c
+                                   JOIN dbo.CP08_estados e ON e.id_estado = c.id_estado
+                                   WHERE c.id_cuenta_pagar = @id_cuenta_pagar);
+    IF @estado IS NULL
+        THROW 50032, 'La cuenta por pagar no existe.', 1;
+    IF @estado = 'ANULADA'
+        THROW 50026, 'La cuenta por pagar está anulada y no se puede modificar.', 1;
+    IF EXISTS (SELECT 1 FROM dbo.CP07_movimientos
+               WHERE id_cuenta_pagar = @id_cuenta_pagar
+                 AND id_estado <> dbo.fn_estado_id('MOVIMIENTO', 'ANULADO'))
+        THROW 50027, 'La cuenta tiene pagos o movimientos vigentes; anúlelos antes de modificarla.', 1;
+
+    IF NOT EXISTS (SELECT 1 FROM dbo.CP01_proveedores WHERE id_proveedor = @id_proveedor AND estado = 1)
+        THROW 50020, 'El proveedor no existe o está inactivo.', 1;
+    IF ISJSON(@detalle) = 0 OR NOT EXISTS (SELECT 1 FROM OPENJSON(@detalle))
+        THROW 50021, 'El detalle debe ser un arreglo JSON con al menos una línea.', 1;
+    IF @pct_descuento_pronto_pago > 0 AND @dias_descuento IS NULL
+        THROW 50022, 'Si hay descuento por pronto pago debe indicar los días para aprovecharlo.', 1;
+    IF @fecha_emision > CAST(SYSDATETIME() AS DATE)
+        THROW 50024, 'La fecha de emisión no puede ser posterior a hoy.', 1;
+
+    SELECT @dias_credito = ISNULL(@dias_credito, dias_credito)
+    FROM dbo.CP01_proveedores WHERE id_proveedor = @id_proveedor;
+    IF @dias_credito NOT BETWEEN 0 AND 365
+        THROW 50025, 'Los días de crédito deben estar entre 0 y 365.', 1;
+    IF @dias_descuento > @dias_credito
+        THROW 50023, 'Los días para el descuento no pueden superar los días de crédito.', 1;
+
+    DECLARE @lineas TABLE (numero_linea INT, descripcion VARCHAR(250), cantidad DECIMAL(18,4),
+                           precio_unitario DECIMAL(18,4), pct_impuesto DECIMAL(5,2),
+                           subtotal DECIMAL(18,2), monto_impuesto DECIMAL(18,2));
+    INSERT INTO @lineas
+    SELECT ROW_NUMBER() OVER (ORDER BY CAST(j.[key] AS INT)), v.descripcion, v.cantidad, v.precio_unitario,
+           ISNULL(v.pct_impuesto, 0),
+           ROUND(v.cantidad * v.precio_unitario, 2),
+           ROUND(ROUND(v.cantidad * v.precio_unitario, 2) * ISNULL(v.pct_impuesto, 0) / 100, 2)
+    FROM OPENJSON(@detalle) j
+    CROSS APPLY OPENJSON(j.[value]) WITH (descripcion VARCHAR(250), cantidad DECIMAL(18,4),
+                                          precio_unitario DECIMAL(18,4), pct_impuesto DECIMAL(5,2)) v;
+
+    DECLARE @subtotal DECIMAL(18,2), @impuesto DECIMAL(18,2), @vence DATE = DATEADD(DAY, @dias_credito, @fecha_emision);
+    SELECT @subtotal = SUM(subtotal), @impuesto = SUM(monto_impuesto) FROM @lineas;
+
+    DECLARE @tc INT = @@TRANCOUNT;
+    BEGIN TRY
+        IF @tc = 0 BEGIN TRANSACTION; ELSE SAVE TRANSACTION sp_cuenta_modificar;
+
+        UPDATE dbo.CP04_cuentas_por_pagar
+        SET id_proveedor = @id_proveedor, numero_factura = @numero_factura, fecha_emision = @fecha_emision,
+            fecha_vencimiento = @vence, dias_credito = @dias_credito,
+            pct_descuento_pronto_pago = @pct_descuento_pronto_pago,
+            fecha_limite_descuento = IIF(@pct_descuento_pronto_pago > 0, DATEADD(DAY, @dias_descuento, @fecha_emision), NULL),
+            subtotal = @subtotal, monto_impuesto = @impuesto, monto_total = @subtotal + @impuesto,
+            saldo_pendiente = @subtotal + @impuesto,
+            id_estado = dbo.fn_estado_id('CUENTA_PAGAR',
+                dbo.fn_estado_cuenta_codigo(@subtotal + @impuesto, @subtotal + @impuesto, @vence, CAST(SYSDATETIME() AS DATE))),
+            codigo_erp = @codigo_erp
+        WHERE id_cuenta_pagar = @id_cuenta_pagar;
+
+        DECLARE @detalle_anterior NVARCHAR(MAX) = (
+            SELECT numero_linea, descripcion, cantidad, precio_unitario, pct_impuesto, total_linea
+            FROM dbo.CP05_cuentas_por_pagar_detalle WHERE id_cuenta_pagar = @id_cuenta_pagar
+            ORDER BY numero_linea FOR JSON PATH);
+
+        DELETE FROM dbo.CP05_cuentas_por_pagar_detalle WHERE id_cuenta_pagar = @id_cuenta_pagar;
+        INSERT INTO dbo.CP05_cuentas_por_pagar_detalle (id_cuenta_pagar, numero_linea, descripcion, cantidad,
+                    precio_unitario, pct_impuesto, monto_impuesto, total_linea)
+        SELECT @id_cuenta_pagar, numero_linea, descripcion, cantidad, precio_unitario, pct_impuesto,
+               monto_impuesto, subtotal + monto_impuesto
+        FROM @lineas;
+
+        EXEC dbo.sp_auditoria_registrar @id_usuario, 'CP05_cuentas_por_pagar_detalle', @id_cuenta_pagar, 'UPDATE',
+             @detalle_anterior, @detalle;
+        IF @tc = 0 COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() = -1 OR (XACT_STATE() = 1 AND @tc = 0) ROLLBACK TRANSACTION;
+        ELSE IF XACT_STATE() = 1 ROLLBACK TRANSACTION sp_cuenta_modificar;
+        THROW;
+    END CATCH;
+END;
+GO
+
+/* -------------------------------------------------------------------------------------
+   14. Flujo de caja proyectado sin doble conteo.
+   Un pago programado se aplica a las cuentas abiertas de su proveedor (de la más antigua a
+   la más reciente), así que esas cuentas ya están representadas por el pago programado.
+   Por cada proveedor con programación, el total programado en el rango cubre sus cuentas
+   en orden de vencimiento y solo se proyecta la parte de cada cuenta que no queda cubierta.
+   ------------------------------------------------------------------------------------- */
+CREATE OR ALTER FUNCTION dbo.fn_flujo_caja_proyectado (@desde DATE, @hasta DATE)
+RETURNS @flujo TABLE (
+    fecha        DATE,
+    origen       VARCHAR(20),
+    id_proveedor INT,
+    referencia   VARCHAR(60),
+    monto        DECIMAL(18,2)
+)
+AS
+BEGIN
+    -- Cuentas con saldo: las ya vencidas se proyectan en la primera fecha del rango
+    DECLARE @cuentas TABLE (id_cuenta_pagar INT, fecha DATE, origen VARCHAR(20), id_proveedor INT,
+                            referencia VARCHAR(60), monto DECIMAL(18,2), vencimiento DATE);
+    INSERT INTO @cuentas
+    SELECT c.id_cuenta_pagar,
+           IIF(c.fecha_vencimiento < @desde, @desde, c.fecha_vencimiento),
+           IIF(c.fecha_vencimiento < @desde, 'Cuenta vencida', 'Cuenta por pagar'),
+           c.id_proveedor, c.numero_factura, c.saldo_pendiente, c.fecha_vencimiento
+    FROM dbo.CP04_cuentas_por_pagar c
+    JOIN dbo.CP08_estados e ON e.id_estado = c.id_estado
+    WHERE c.saldo_pendiente > 0 AND e.codigo <> 'ANULADA' AND c.fecha_vencimiento <= @hasta;
+
+    -- Pagos programados: se recorre cada ejecución futura dentro del rango
+    DECLARE @prog TABLE (id_programacion INT, id_proveedor INT, id_frecuencia INT, dia TINYINT,
+                         monto DECIMAL(18,2), proxima DATE, fecha_fin DATE, descripcion VARCHAR(150));
+    INSERT INTO @prog
+    SELECT id_programacion, id_proveedor, id_frecuencia, dia_ejecucion, monto,
+           proxima_ejecucion, fecha_fin, descripcion
+    FROM dbo.CP10_programacion_pagos
+    WHERE estado = 1 AND proxima_ejecucion <= @hasta;
+
+    DECLARE @id INT, @fecha DATE;
+    WHILE EXISTS (SELECT 1 FROM @prog)
+    BEGIN
+        SELECT TOP (1) @id = id_programacion, @fecha = proxima FROM @prog ORDER BY id_programacion;
+
+        WHILE @fecha <= @hasta
+              AND @fecha <= ISNULL((SELECT fecha_fin FROM @prog WHERE id_programacion = @id), '99991231')
+        BEGIN
+            IF @fecha >= @desde
+                INSERT INTO @flujo (fecha, origen, id_proveedor, referencia, monto)
+                SELECT @fecha, 'Pago programado', id_proveedor, LEFT(descripcion, 60), monto
+                FROM @prog WHERE id_programacion = @id;
+
+            SELECT @fecha = dbo.fn_siguiente_ejecucion(@fecha, id_frecuencia, dia)
+            FROM @prog WHERE id_programacion = @id;
+        END;
+
+        DELETE FROM @prog WHERE id_programacion = @id;
+    END;
+
+    -- Parte de cada cuenta que no cubren los pagos programados de su proveedor
+    WITH programado AS (
+        SELECT id_proveedor, SUM(monto) AS total
+        FROM @flujo WHERE origen = 'Pago programado'
+        GROUP BY id_proveedor
+    ),
+    acumulado AS (
+        SELECT c.*, SUM(c.monto) OVER (PARTITION BY c.id_proveedor ORDER BY c.vencimiento, c.id_cuenta_pagar
+                                       ROWS UNBOUNDED PRECEDING) AS acumulado
+        FROM @cuentas c
+    ),
+    descubierto AS (
+        SELECT a.fecha, a.origen, a.id_proveedor, a.referencia,
+               CASE WHEN p.total IS NULL THEN a.monto
+                    WHEN a.acumulado <= p.total THEN 0
+                    WHEN a.acumulado - a.monto < p.total THEN a.acumulado - p.total
+                    ELSE a.monto END AS monto
+        FROM acumulado a
+        LEFT JOIN programado p ON p.id_proveedor = a.id_proveedor
+    )
+    INSERT INTO @flujo (fecha, origen, id_proveedor, referencia, monto)
+    SELECT fecha, origen, id_proveedor, referencia, monto FROM descubierto WHERE monto > 0;
+
+    RETURN;
+END;
+GO
+
+GRANT EXECUTE ON dbo.sp_cuenta_pagar_modificar TO rol_cxp_operacion;
+GO

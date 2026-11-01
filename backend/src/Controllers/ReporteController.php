@@ -10,6 +10,8 @@ use App\Http\Response;
 use App\Repositories\ReporteRepository;
 use App\Security\Auth;
 use App\Support\Logger;
+use App\Support\Validator;
+use DateTimeImmutable;
 use PDOException;
 
 final class ReporteController
@@ -47,6 +49,35 @@ final class ReporteController
         Auth::requireLogin();
 
         return $this->safe(fn (): array => $this->reportes->saldosProveedor());
+    }
+
+    public function flujoCaja(Request $request, array $params = []): Response
+    {
+        Auth::requireLogin();
+
+        $hoy = new DateTimeImmutable('today');
+        $desde = Validator::date((string) ($request->query('desde') ?: $hoy->format('Y-m-d')), 'desde');
+        $hasta = Validator::date((string) ($request->query('hasta') ?: $hoy->modify('+90 days')->format('Y-m-d')), 'hasta');
+        $agrupacion = strtoupper((string) ($request->query('agrupacion') ?: 'SEMANA'));
+
+        if ($hasta < $desde) {
+            throw Validator::invalid('hasta', 'La fecha final no puede ser anterior a la inicial.');
+        }
+
+        if ((new DateTimeImmutable($desde))->diff(new DateTimeImmutable($hasta))->days > 366) {
+            throw Validator::invalid('hasta', 'El rango no puede superar un año.');
+        }
+
+        if (!in_array($agrupacion, ['SEMANA', 'MES'], true)) {
+            throw Validator::invalid('agrupacion', 'La agrupación debe ser SEMANA o MES.');
+        }
+
+        return Response::json([
+            'desde' => $desde,
+            'hasta' => $hasta,
+            'agrupacion' => $agrupacion,
+            'items' => $this->reportes->flujoCaja($desde, $hasta, $agrupacion),
+        ]);
     }
 
     public function etl(Request $request, array $params = []): Response
