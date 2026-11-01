@@ -25,8 +25,15 @@ SELECT p.id_proveedor,
        p.cuenta_bancaria,
        p.estado,
        p.fecha_registro,
-       p.codigo_erp
-FROM dbo.CP01_proveedores p;
+       p.codigo_erp,
+       ev.calificacion_promedio,
+       ISNULL(ev.evaluaciones, 0) AS evaluaciones
+FROM dbo.CP01_proveedores p
+-- Resumen de la evaluación comercial (RF-07) para mostrarlo en el catálogo
+OUTER APPLY (SELECT CAST(AVG(CAST(e.calificacion AS DECIMAL(4,2))) AS DECIMAL(4,2)) AS calificacion_promedio,
+                    COUNT(*) AS evaluaciones
+             FROM dbo.CP19_evaluaciones_proveedor e
+             WHERE e.id_proveedor = p.id_proveedor) ev;
 GO
 
 CREATE OR ALTER VIEW dbo.vw_cuentas_por_pagar
