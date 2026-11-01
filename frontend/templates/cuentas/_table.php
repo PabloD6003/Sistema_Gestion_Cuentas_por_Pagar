@@ -38,14 +38,14 @@ $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
                     $rowClass = $dias !== null && $dias > 0 && (float) ($item['saldo_pendiente'] ?? 0) > 0 && $estado !== 'ANULADA' ? 'is-overdue-row' : '';
                     ?>
                     <tr class="<?= e($rowClass) ?>">
-                        <td><strong><?= e($item['numero_factura'] ?? '—') ?></strong></td>
-                        <td><?= e($item['razon_social'] ?? '—') ?></td>
+                        <td class="app-nowrap"><strong><?= e($item['numero_factura'] ?? '—') ?></strong></td>
+                        <td class="app-col-name"><?= e($item['razon_social'] ?? '—') ?></td>
                         <td><?= fmt_date($item['fecha_emision'] ?? null) ?></td>
                         <td><?= fmt_date($item['fecha_vencimiento'] ?? null) ?></td>
                         <td class="has-text-right"><?= money($item['monto_total'] ?? 0) ?></td>
                         <td class="has-text-right"><strong><?= money($item['saldo_pendiente'] ?? 0) ?></strong></td>
                         <td><?= state_badge($estado) ?></td>
-                        <td>
+                        <td class="app-nowrap">
                             <?php if ($estado === 'PAGADA' || $estado === 'ANULADA'): ?>
                                 <span class="has-text-grey">—</span>
                             <?php elseif ($dias !== null && $dias > 0): ?>

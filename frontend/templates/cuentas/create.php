@@ -116,44 +116,6 @@ $volver = $esEdicion ? '/cuentas/' . $cuentaId : '/cuentas';
                     </div>
                 </div>
             </div>
-
-            <div class="box app-panel mt-5">
-                <div class="level mb-3">
-                    <div class="level-left">
-                        <h3 class="title is-5 mb-0">Detalle</h3>
-                    </div>
-                    <div class="level-right">
-                        <button class="button is-small is-light" type="button" id="agregar-linea">+ Agregar línea</button>
-                    </div>
-                </div>
-
-                <div class="table-container">
-                    <table class="table is-fullwidth is-narrow app-lines-table">
-                        <thead>
-                            <tr>
-                                <th>Descripción</th>
-                                <th class="is-2">Cantidad</th>
-                                <th class="is-2">Precio unitario</th>
-                                <th class="is-2">Impuesto %</th>
-                                <th class="has-text-right">Total</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="detalle-lineas">
-                            <?php foreach ($lineas as $i => $line): ?>
-                                <tr class="linea">
-                                    <td><input class="input is-small" name="detalle[<?= (int) $i ?>][descripcion]" required value="<?= e($line['descripcion'] ?? '') ?>" placeholder="Servicio o producto"></td>
-                                    <td><input class="input is-small cantidad" name="detalle[<?= (int) $i ?>][cantidad]" type="number" min="0.0001" step="0.0001" required value="<?= e($line['cantidad'] ?? 1) ?>"></td>
-                                    <td><input class="input is-small precio" name="detalle[<?= (int) $i ?>][precio_unitario]" type="number" min="0" step="0.0001" required value="<?= e($line['precio_unitario'] ?? '') ?>"></td>
-                                    <td><input class="input is-small impuesto" name="detalle[<?= (int) $i ?>][pct_impuesto]" type="number" min="0" max="100" step="0.01" value="<?= e($line['pct_impuesto'] ?? 13) ?>"></td>
-                                    <td class="has-text-right"><span class="linea-total has-text-weight-semibold">—</span></td>
-                                    <td class="has-text-right"><button class="button is-small is-danger is-light remove-linea" type="button">×</button></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
 
         <div class="column is-5">
@@ -170,6 +132,49 @@ $volver = $esEdicion ? '/cuentas/' . $cuentaId : '/cuentas';
                 <button class="button is-primary is-fullwidth is-medium mt-4" type="submit"><?= $esEdicion ? 'Guardar cambios' : 'Registrar factura' ?></button>
                 <a class="button is-light is-fullwidth mt-2" href="<?= e($volver) ?>">Cancelar</a>
             </div>
+        </div>
+    </div>
+
+    <div class="box app-panel mt-5">
+        <div class="level mb-3">
+            <div class="level-left">
+                <h3 class="title is-5 mb-0">Detalle</h3>
+            </div>
+            <div class="level-right">
+                <button class="button is-small is-light" type="button" id="agregar-linea">+ Agregar línea</button>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table class="table is-fullwidth is-narrow app-lines-table">
+                <thead>
+                    <tr>
+                        <th>Descripción</th>
+                        <th class="is-2">Cantidad</th>
+                        <th class="is-2">Precio unitario</th>
+                        <th class="is-2">Impuesto %</th>
+                        <th class="has-text-right">Total</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="detalle-lineas">
+                    <?php foreach ($lineas as $i => $line): ?>
+                        <tr class="linea">
+                            <td><input class="input is-small" name="detalle[<?= (int) $i ?>][descripcion]" required value="<?= e($line['descripcion'] ?? '') ?>" placeholder="Servicio o producto"></td>
+                            <td><input class="input is-small cantidad" name="detalle[<?= (int) $i ?>][cantidad]" type="number" min="0.0001" step="0.0001" required value="<?= e($line['cantidad'] ?? 1) ?>"></td>
+                            <td><input class="input is-small precio" name="detalle[<?= (int) $i ?>][precio_unitario]" type="number" min="0" step="0.0001" required value="<?= e($line['precio_unitario'] ?? '') ?>"></td>
+                            <td><input class="input is-small impuesto" name="detalle[<?= (int) $i ?>][pct_impuesto]" type="number" min="0" max="100" step="0.01" value="<?= e($line['pct_impuesto'] ?? 13) ?>"></td>
+                            <td class="has-text-right"><span class="linea-total has-text-weight-semibold">—</span></td>
+                            <td class="has-text-right"><button class="button is-small is-danger is-light remove-linea" type="button">×</button></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="buttons is-right mt-4">
+            <a class="button is-light" href="<?= e($volver) ?>">Cancelar</a>
+            <button class="button is-primary" type="submit"><?= $esEdicion ? 'Guardar cambios' : 'Registrar factura' ?></button>
         </div>
     </div>
 </form>

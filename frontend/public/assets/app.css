@@ -1,4 +1,5 @@
 :root {
+    color-scheme: light;
     --app-ink: #0f172a;
     --app-muted: #64748b;
     --app-line: #e2e8f0;
@@ -77,7 +78,7 @@ body {
 }
 
 .app-menu .menu-label {
-    color: #64748b;
+    color: #94a3b8;
     font-size: 0.65rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
@@ -102,8 +103,8 @@ body {
 }
 
 .app-menu .menu-list a small {
-    color: #64748b;
-    font-size: 0.65rem;
+    color: #94a3b8;
+    font-size: 0.7rem;
 }
 
 .app-menu .menu-list a:hover {
@@ -125,8 +126,8 @@ body {
     margin-top: auto;
     padding: 1rem 0.4rem 0;
     border-top: 1px solid rgba(148, 163, 184, 0.15);
-    font-size: 0.68rem;
-    color: #64748b;
+    font-size: 0.7rem;
+    color: #94a3b8;
 }
 
 .app-sidebar-footer p {
@@ -228,6 +229,14 @@ body {
 .button.is-primary {
     background-color: #1d4ed8;
     border-color: #1d4ed8;
+    /* Bulma calcula el texto para su propio azul; sobre este azul el texto debe ser blanco */
+    color: #fff;
+}
+
+.button.is-primary:hover,
+.button.is-primary:focus,
+.button.is-primary:active {
+    color: #fff;
 }
 
 .button.is-primary:hover,
@@ -340,8 +349,8 @@ body {
 .aging-pct {
     display: block;
     text-align: right;
-    font-size: 0.68rem;
-    color: #94a3b8;
+    font-size: 0.7rem;
+    color: #64748b;
     margin-top: 0.2rem;
 }
 
@@ -416,6 +425,10 @@ body {
 
 .app-lines-table input {
     min-width: 72px;
+}
+
+.app-lines-table td:first-child {
+    min-width: 14rem;
 }
 
 .reporte-tabs-wrap {
@@ -631,4 +644,205 @@ body {
     .action-form .input {
         width: 100%;
     }
+}
+
+/* ---------- Tablas: valores que no deben partirse ---------- */
+.app-nowrap {
+    white-space: nowrap;
+}
+
+.app-table td,
+.app-table th {
+    vertical-align: middle;
+}
+
+.app-table td.has-text-right,
+.app-stat-money {
+    font-variant-numeric: tabular-nums;
+}
+
+.table td.has-text-right {
+    white-space: nowrap;
+}
+
+/* ---------- Evaluación comercial y reseñas ---------- */
+.app-stars {
+    color: #d97706;
+    letter-spacing: 0.08em;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.app-stars-off {
+    color: #cbd5e1;
+}
+
+.app-stars.is-empty {
+    color: var(--app-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0;
+    font-style: italic;
+}
+
+.app-rating-summary {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 14px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+}
+
+.app-rating-big {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--app-ink);
+}
+
+.app-rating-row {
+    display: grid;
+    grid-template-columns: 2.4rem 1fr 1.6rem;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #475569;
+    margin-bottom: 0.35rem;
+}
+
+.app-rating-bar {
+    height: 8px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    overflow: hidden;
+}
+
+.app-rating-bar span {
+    display: block;
+    height: 100%;
+    background: #f59e0b;
+    border-radius: 999px;
+}
+
+.app-review-list {
+    max-height: 22rem;
+    overflow-y: auto;
+    padding-right: 0.3rem;
+}
+
+.app-review {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--app-line);
+}
+
+.app-review:last-child {
+    border-bottom: none;
+}
+
+.app-review-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.3rem;
+}
+
+.app-form-card {
+    padding: 1rem;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid var(--app-line);
+}
+
+/* Estrellas seleccionables: los radios van de 5 a 1 y se muestran invertidos */
+.app-rating-input {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 0.15rem;
+}
+
+.app-rating-input input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.app-rating-input label {
+    font-size: 1.9rem;
+    line-height: 1;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: color 0.1s ease;
+}
+
+.app-rating-input label:hover,
+.app-rating-input label:hover ~ label,
+.app-rating-input input:checked ~ label {
+    color: #f59e0b;
+}
+
+.app-rating-input input:focus-visible + label {
+    outline: 2px solid var(--app-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ---------- Paneles desplegables ---------- */
+.app-collapsible > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.app-collapsible > summary::-webkit-details-marker {
+    display: none;
+}
+
+.app-collapsible > summary::after {
+    content: "Mostrar";
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--app-primary);
+}
+
+.app-collapsible[open] > summary::after {
+    content: "Ocultar";
+}
+.table th.has-text-right {
+    white-space: nowrap;
+}
+
+/* Acciones irreversibles en un panel aparte, no junto a los botones de navegación */
+.app-danger-zone {
+    border-color: #fecaca;
+}
+
+.app-danger-zone > summary::after {
+    color: #b91c1c;
+}
+/* Nombres de proveedor: ancho mínimo para que no queden en tres líneas */
+.app-col-name {
+    min-width: 11rem;
+}
+
+/* El rojo de Bulma no alcanza 4.5:1 sobre blanco ni sobre las filas vencidas */
+.has-text-danger {
+    color: #b91c1c !important;
+}
+
+/* Acción de anular dentro de una fila: el motivo se pide al desplegarla */
+.app-inline-action > summary {
+    list-style: none;
+}
+
+.app-inline-action > summary::-webkit-details-marker {
+    display: none;
+}
+
+.app-inline-form {
+    display: flex;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+    min-width: 15rem;
 }

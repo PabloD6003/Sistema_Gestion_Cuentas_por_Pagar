@@ -30,11 +30,8 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
                 <a class="button is-link is-light" href="/cuentas/<?= $id ?>/editar">Modificar</a>
             <?php endif; ?>
             <?php if ($canApprove && $estado !== 'ANULADA'): ?>
-                <form method="post" action="/cuentas/<?= $id ?>/anular" class="action-form" onsubmit="return confirm('¿Anular esta factura? Esta acción no se puede deshacer.');">
-                    <?= csrf_field() ?>
-                    <input class="input" name="motivo" placeholder="Motivo de la anulación" maxlength="150" required>
-                    <button class="button is-danger is-light" type="submit">Anular factura</button>
-                </form>
+                <a class="button is-danger is-light" href="#anular-factura"
+                   onclick="document.getElementById('anular-factura').open = true;">Anular factura</a>
             <?php endif; ?>
         </div>
     </div>
@@ -76,7 +73,7 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
 </div>
 
 <div class="columns is-variable is-6 mt-1">
-    <div class="column is-7">
+    <div class="column is-8">
         <div class="box app-panel">
             <h3 class="title is-5 mb-4">Detalle de la factura</h3>
             <div class="table-container">
@@ -167,7 +164,7 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
                                     <td><?= fmt_date($mov['fecha_movimiento'] ?? null) ?></td>
                                     <td><?= e($movTipo) ?></td>
                                     <td>
-                                        <span><?= e($mov['referencia'] ?? '—') ?></span>
+                                        <span class="app-nowrap"><?= e($mov['referencia'] ?? '—') ?></span>
                                         <?php if (!empty($mov['descripcion'])): ?>
                                             <p class="is-size-7 has-text-grey"><?= e($mov['descripcion']) ?></p>
                                         <?php endif; ?>
@@ -184,12 +181,15 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
                                                 <button class="button is-small is-success is-light" type="submit">Aprobar</button>
                                             </form>
                                         <?php elseif ($canApprove && $movEstado === 'APROBADO' && !$isDiscount && empty($mov['conciliado'])): ?>
-                                            <form method="post" action="/pagos/<?= $movId ?>/anular" class="action-form" onsubmit="return confirm('¿Anular este pago? Se restaurará el saldo de la factura.');">
-                                                <?= csrf_field() ?>
-                                                <input type="hidden" name="return_to" value="/cuentas/<?= $id ?>">
-                                                <input class="input is-small" name="motivo" placeholder="Motivo" required>
-                                                <button class="button is-small is-danger is-light" type="submit">Anular</button>
-                                            </form>
+                                            <details class="app-inline-action">
+                                                <summary class="button is-small is-danger is-light">Anular</summary>
+                                                <form method="post" action="/pagos/<?= $movId ?>/anular" class="app-inline-form" onsubmit="return confirm('¿Anular este pago? Se restaurará el saldo de la factura.');">
+                                                    <?= csrf_field() ?>
+                                                    <input type="hidden" name="return_to" value="/cuentas/<?= $id ?>">
+                                                    <input class="input is-small" name="motivo" placeholder="Motivo de la anulación" maxlength="150" required>
+                                                    <button class="button is-small is-danger" type="submit">Confirmar</button>
+                                                </form>
+                                            </details>
                                         <?php elseif ($canApprove && $movEstado === 'APROBADO' && !empty($mov['conciliado'])): ?>
                                             <span class="tag is-link">Conciliado</span>
                                         <?php elseif ($isDiscount && $movEstado === 'APROBADO'): ?>
@@ -212,7 +212,7 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
         </div>
     </div>
 
-    <div class="column is-5">
+    <div class="column is-4">
         <?php if ($estado === 'ANULADA'): ?>
             <div class="box app-panel">
                 <div class="notification is-danger is-light mb-0">Esta factura está anulada. No admite nuevos pagos.</div>
@@ -313,5 +313,24 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
             <div class="app-kv"><span>Registro</span><strong><?= fmt_datetime($cuenta['fecha_registro'] ?? null) ?></strong></div>
             <div class="app-kv"><span>Código ERP</span><strong><?= e($cuenta['codigo_erp'] ?? '—') ?></strong></div>
         </div>
+
+        <?php if ($canApprove && $estado !== 'ANULADA'): ?>
+            <details class="box app-panel mt-5 app-collapsible app-danger-zone" id="anular-factura">
+                <summary><span class="title is-6 mb-0">Anular factura</span></summary>
+                <form method="post" action="/cuentas/<?= $id ?>/anular" class="mt-3"
+                      onsubmit="return confirm('¿Anular esta factura? Esta acción no se puede deshacer.');">
+                    <?= csrf_field() ?>
+                    <p class="is-size-7 has-text-grey mb-3">Solo se puede anular si no tiene pagos aprobados. Los pagos registrados sin aprobar se anulan con ella.</p>
+                    <div class="field">
+                        <label class="label is-small" for="motivo-anulacion">Motivo *</label>
+                        <div class="control">
+                            <input class="input" id="motivo-anulacion" name="motivo" maxlength="150" required
+                                   placeholder="Factura emitida por error, duplicada...">
+                        </div>
+                    </div>
+                    <button class="button is-danger is-fullwidth" type="submit">Anular factura</button>
+                </form>
+            </details>
+        <?php endif; ?>
     </div>
 </div>

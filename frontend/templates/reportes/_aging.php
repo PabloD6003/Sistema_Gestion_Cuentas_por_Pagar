@@ -40,8 +40,8 @@ foreach ($items as $row) {
                 <tbody>
                     <?php foreach ($items as $row): ?>
                         <tr>
-                            <td><?= e($row['razon_social'] ?? '—') ?></td>
-                            <td><?= e($row['numero_factura'] ?? '—') ?></td>
+                            <td class="app-col-name"><?= e($row['razon_social'] ?? '—') ?></td>
+                            <td class="app-nowrap"><?= e($row['numero_factura'] ?? '—') ?></td>
                             <td><?= fmt_date($row['fecha_emision'] ?? null) ?></td>
                             <td><?= fmt_date($row['fecha_vencimiento'] ?? null) ?></td>
                             <td><?= state_badge($row['estado'] ?? null) ?></td>

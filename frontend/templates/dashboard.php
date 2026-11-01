@@ -201,7 +201,7 @@ $bucketColors = [
                 <?php else: ?>
                     <?php foreach ($recent as $item): ?>
                         <tr>
-                            <td><a class="has-text-weight-semibold" href="/cuentas/<?= (int) ($item['id_cuenta_pagar'] ?? 0) ?>"><?= e($item['numero_factura'] ?? '—') ?></a></td>
+                            <td class="app-nowrap"><a class="has-text-weight-semibold" href="/cuentas/<?= (int) ($item['id_cuenta_pagar'] ?? 0) ?>"><?= e($item['numero_factura'] ?? '—') ?></a></td>
                             <td><?= e($item['razon_social'] ?? '—') ?></td>
                             <td><?= fmt_date($item['fecha_vencimiento'] ?? null) ?></td>
                             <td class="has-text-right"><?= money($item['monto_total'] ?? 0) ?></td>
