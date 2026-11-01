@@ -20,8 +20,7 @@ foreach ($bancos as $banco) {
     </div>
 </div>
 
-<div class="columns is-variable is-5">
-    <div class="column is-7">
+<div>
         <div class="box app-panel">
             <div class="level mb-4">
                 <div class="level-left">
@@ -116,7 +115,7 @@ foreach ($bancos as $banco) {
                                 <tr>
                                     <td><?= e((string) ($linea['linea'] ?? '')) ?></td>
                                     <td><?= fmt_date($linea['fecha'] ?? null) ?></td>
-                                    <td><?= e($linea['referencia'] ?? '') ?></td>
+                                    <td class="app-nowrap"><?= e($linea['referencia'] ?? '') ?></td>
                                     <td class="has-text-right"><?= money($linea['monto'] ?? 0) ?></td>
                                     <td><?= $linea['id_movimiento'] === null ? '—' : '#' . (int) $linea['id_movimiento'] ?></td>
                                     <td>
@@ -133,9 +132,10 @@ foreach ($bancos as $banco) {
                 </div>
             </div>
         <?php endif; ?>
-    </div>
+</div>
 
-    <div class="column is-5">
+<div class="columns is-variable is-5 mt-2">
+    <div class="column is-7">
         <div class="box app-panel">
             <h3 class="title is-5 mb-3">Conciliar extracto bancario</h3>
             <form method="get" action="/tesoreria" class="mb-4">
@@ -175,8 +175,10 @@ foreach ($bancos as $banco) {
                 <button class="button is-primary is-fullwidth" type="submit" <?= $bancoActual === null ? 'disabled' : '' ?>>Conciliar</button>
             </form>
         </div>
+    </div>
 
-        <div class="box app-panel mt-5">
+    <div class="column is-5">
+        <div class="box app-panel">
             <div class="level mb-3">
                 <div class="level-left">
                     <h3 class="title is-6 mb-0">Pagos aprobados sin conciliar</h3>

@@ -22,10 +22,13 @@ if (\App\Auth::isAdmin()) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light" class="theme-light">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Los estilos propios están pensados para fondo claro: se fija el tema claro de Bulma
+         para que no cambie a oscuro cuando el sistema operativo usa tema oscuro -->
+    <meta name="color-scheme" content="light">
     <title><?= e($pageTitle ?? 'Inicio') ?> · <?= e($appName) ?></title>
     <meta name="csrf-token" content="<?= e(\App\Security\Csrf::token()) ?>">
     <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">

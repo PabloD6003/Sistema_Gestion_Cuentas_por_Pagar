@@ -9,21 +9,19 @@ $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
     <table class="table is-fullwidth is-hoverable is-narrow">
         <thead>
             <tr>
-                <th>#</th>
                 <th>Factura</th>
                 <th>Proveedor</th>
                 <th>Fecha</th>
                 <th>Tipo</th>
                 <th class="has-text-right">Monto</th>
                 <th>Estado</th>
-                <th>Conciliación</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($items)): ?>
                 <tr>
-                    <td colspan="9">
+                    <td colspan="7">
                         <div class="app-empty-state py-6">
                             <p class="has-text-weight-semibold">No se encontraron movimientos.</p>
                             <p class="has-text-grey is-size-7">Ajuste los filtros o registre un pago desde una factura.</p>
@@ -40,25 +38,29 @@ $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
                     $isDiscount = str_contains(strtolower($movTipo), 'descuento');
                     $canApproveRow = !empty($canApprove);
                     ?>
-                    <tr>
-                        <td><?= $movId ?></td>
+                    <tr title="Movimiento #<?= $movId ?>">
                         <td>
-                            <a href="/cuentas/<?= $cuentaId ?>" class="has-text-weight-semibold"><?= e($item['numero_factura'] ?? '—') ?></a>
+                            <a href="/cuentas/<?= $cuentaId ?>" class="has-text-weight-semibold app-nowrap"><?= e($item['numero_factura'] ?? '—') ?></a>
                             <?php if (!empty($item['referencia'])): ?>
-                                <p class="is-size-7 has-text-grey"><?= e($item['referencia']) ?></p>
+                                <p class="is-size-7 has-text-grey app-nowrap"><?= e($item['referencia']) ?></p>
                             <?php endif; ?>
                         </td>
-                        <td><?= e($item['razon_social'] ?? '—') ?></td>
-                        <td><?= fmt_date($item['fecha_movimiento'] ?? null) ?></td>
-                        <td><?= e($movTipo ?: '—') ?></td>
-                        <td class="has-text-right"><strong><?= money($item['monto'] ?? 0) ?></strong></td>
-                        <td><?= state_badge($movEstado) ?></td>
+                        <td class="app-col-name"><?= e($item['razon_social'] ?? '—') ?></td>
+                        <td class="app-nowrap"><?= fmt_date($item['fecha_movimiento'] ?? null) ?></td>
                         <td>
-                            <?php if (!empty($item['conciliado'])): ?>
-                                <span class="tag is-link">Conciliado</span>
+                            <?php if ($isDiscount): ?>
+                                <span>Descuento</span>
+                                <p class="is-size-7 has-text-grey app-nowrap">pronto pago</p>
                             <?php else: ?>
-                                <span class="tag is-light">No conciliado</span>
+                                <?= e($movTipo ?: '—') ?>
                             <?php endif; ?>
+                        </td>
+                        <td class="has-text-right"><strong><?= money($item['monto'] ?? 0) ?></strong></td>
+                        <td>
+                            <?= state_badge($movEstado) ?>
+                            <p class="is-size-7 mt-1 <?= !empty($item['conciliado']) ? 'has-text-link' : 'has-text-grey' ?> app-nowrap">
+                                <?= !empty($item['conciliado']) ? 'Conciliado' : 'Sin conciliar' ?>
+                            </p>
                         </td>
                         <td>
                             <?php if ($isDiscount && $movEstado === 'REGISTRADO'): ?>
@@ -70,12 +72,15 @@ $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
                                     <button class="button is-small is-success is-light" type="submit">Aprobar</button>
                                 </form>
                             <?php elseif ($canApproveRow && $movEstado === 'APROBADO' && !$isDiscount && empty($item['conciliado'])): ?>
-                                <form method="post" action="/pagos/<?= $movId ?>/anular" class="action-form" onsubmit="return confirm('¿Anular este pago? Se restaurará el saldo de la factura.');">
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="return_to" value="/pagos">
-                                    <input class="input is-small" name="motivo" placeholder="Motivo" required>
-                                    <button class="button is-small is-danger is-light" type="submit">Anular</button>
-                                </form>
+                                <details class="app-inline-action">
+                                    <summary class="button is-small is-danger is-light">Anular</summary>
+                                    <form method="post" action="/pagos/<?= $movId ?>/anular" class="app-inline-form" onsubmit="return confirm('¿Anular este pago? Se restaurará el saldo de la factura.');">
+                                        <?= csrf_field() ?>
+                                        <input type="hidden" name="return_to" value="/pagos">
+                                        <input class="input is-small" name="motivo" placeholder="Motivo de la anulación" maxlength="150" required>
+                                        <button class="button is-small is-danger" type="submit">Confirmar</button>
+                                    </form>
+                                </details>
                             <?php elseif ($canApproveRow && $movEstado === 'APROBADO' && !empty($item['conciliado'])): ?>
                                 <span class="is-size-7 has-text-grey">No anulable</span>
                             <?php elseif ($isDiscount && $movEstado === 'APROBADO'): ?>

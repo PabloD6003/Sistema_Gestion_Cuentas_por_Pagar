@@ -42,7 +42,7 @@ final class ProveedorRepository
         $rows = Database::fetchAll(
             'SELECT id_proveedor, identificacion_tributaria, razon_social, nombre_comercial, pais,
                     direccion, telefono, correo, contacto_nombre, dias_credito, banco,
-                    cuenta_bancaria, estado, fecha_registro, codigo_erp
+                    cuenta_bancaria, estado, fecha_registro, codigo_erp, calificacion_promedio, evaluaciones
              FROM dbo.vw_proveedores' . $whereSql . '
              ORDER BY razon_social
              OFFSET ? ROWS FETCH NEXT ? ROWS ONLY',
@@ -50,7 +50,7 @@ final class ProveedorRepository
         );
 
         return [
-            'items' => Cast::rows($rows, ['id_proveedor', 'dias_credito'], [], ['estado']),
+            'items' => Cast::rows($rows, ['id_proveedor', 'dias_credito', 'evaluaciones'], ['calificacion_promedio'], ['estado']),
             'total' => $total,
             'page' => $page,
             'per_page' => $perPage,
@@ -66,12 +66,12 @@ final class ProveedorRepository
         $row = Database::fetchOne(
             'SELECT id_proveedor, identificacion_tributaria, razon_social, nombre_comercial, pais,
                     direccion, telefono, correo, contacto_nombre, dias_credito, banco,
-                    cuenta_bancaria, estado, fecha_registro, codigo_erp
+                    cuenta_bancaria, estado, fecha_registro, codigo_erp, calificacion_promedio, evaluaciones
              FROM dbo.vw_proveedores WHERE id_proveedor = ?',
             [$id]
         );
 
-        return $row === null ? null : Cast::row($row, ['id_proveedor', 'dias_credito'], [], ['estado']);
+        return $row === null ? null : Cast::row($row, ['id_proveedor', 'dias_credito', 'evaluaciones'], ['calificacion_promedio'], ['estado']);
     }
 
     /**

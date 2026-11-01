@@ -77,6 +77,24 @@ function take_flashes(): array
     return is_array($flashes) ? $flashes : [];
 }
 
+/**
+ * Calificación de 1 a 5 como estrellas, con el valor numérico para lectores de pantalla.
+ */
+function rating_stars(mixed $value): string
+{
+    if ($value === null || $value === '') {
+        return '<span class="app-stars is-empty">Sin evaluar</span>';
+    }
+
+    $rating = max(0.0, min(5.0, (float) $value));
+    $full = (int) round($rating);
+    $label = number_format($rating, $rating === floor($rating) ? 0 : 1) . ' de 5';
+
+    return '<span class="app-stars" title="' . e($label) . '" aria-label="' . e($label) . '">'
+        . str_repeat('★', $full) . '<span class="app-stars-off">' . str_repeat('★', 5 - $full) . '</span>'
+        . '</span>';
+}
+
 function old(array $old, string $key, mixed $default = ''): mixed
 {
     return $old[$key] ?? $default;
