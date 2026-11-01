@@ -50,15 +50,17 @@ GO
 
 CREATE OR ALTER VIEW rpt.vw_pagos_por_mes
 AS
+-- El descuento por pronto pago es un movimiento aparte (hijo del pago), por eso se incluyen
+-- ambos tipos y solo las filas "Pago" cuentan como pagos.
 SELECT t.anio_mes,
-       COUNT(*) AS cantidad_pagos,
+       SUM(CASE WHEN tm.nombre = 'Pago' THEN 1 ELSE 0 END) AS cantidad_pagos,
        SUM(p.monto_pago) AS monto_pagado,
        SUM(p.monto_descuento) AS monto_descuento
 FROM fact.pagos p
 JOIN dim.tiempo t             ON t.tiempo_key = p.tiempo_pago_key
 JOIN dim.tipo_movimiento tm   ON tm.tipo_movimiento_key = p.tipo_movimiento_key
 JOIN dim.estado e             ON e.estado_key = p.estado_movimiento_key
-WHERE tm.nombre = 'Pago'
+WHERE tm.nombre IN ('Pago', 'Descuento por pronto pago')
   AND e.codigo = 'APROBADO'
 GROUP BY t.anio_mes;
 GO

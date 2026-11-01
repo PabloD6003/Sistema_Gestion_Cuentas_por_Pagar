@@ -1,4 +1,4 @@
-/* =====================================================================================
+﻿/* =====================================================================================
    Validaciones de calidad del Data Warehouse.
    Devuelve una fila por control; `resultado` debe ser 0 o `OK`.
    ===================================================================================== */
@@ -28,10 +28,14 @@ SELECT 'saldo_facturas_no_negativo' AS control,
        CASE WHEN NOT EXISTS (SELECT 1 FROM fact.facturas WHERE saldo_pendiente < 0)
             THEN 'OK' ELSE 'ERROR' END AS resultado;
 
+-- Las facturas anuladas quedan con saldo 0 sin movimientos, por eso no entran en la ecuación
 SELECT 'ecuacion_saldo_facturas' AS control,
        CASE WHEN NOT EXISTS (
-                SELECT 1 FROM fact.facturas
-                WHERE ABS((monto_total - monto_pagado - monto_descuento - monto_nota_credito + monto_nota_debito) - saldo_pendiente) > 0.01
+                SELECT 1 FROM fact.facturas f
+                JOIN dim.estado e ON e.estado_key = f.estado_factura_key
+                WHERE e.codigo <> 'ANULADA'
+                  AND ABS((f.monto_total - f.monto_pagado - f.monto_descuento - f.monto_nota_credito + f.monto_nota_debito)
+                          - f.saldo_pendiente) > 0.01
             ) THEN 'OK' ELSE 'ERROR' END AS resultado;
 
 SELECT 'scd2_un_solo_actual' AS control,
