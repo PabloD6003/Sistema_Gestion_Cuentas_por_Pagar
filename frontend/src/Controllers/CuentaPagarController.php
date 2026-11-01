@@ -88,6 +88,94 @@ final class CuentaPagarController
         ]), 422);
     }
 
+    public function edit(Request $request, array $params = []): Response
+    {
+        Auth::requireLogin();
+        $id = $this->id($params);
+        $cuenta = $this->fetchCuenta($id);
+
+        if (empty($cuenta['editable'])) {
+            flash('warning', 'La factura no se puede modificar: está anulada o tiene pagos vigentes.');
+            return Response::redirect('/cuentas/' . $id);
+        }
+
+        $pct = (float) ($cuenta['pct_descuento_pronto_pago'] ?? 0);
+        $diasDescuento = $pct > 0 && !empty($cuenta['fecha_limite_descuento'])
+            ? (int) (new \DateTimeImmutable((string) $cuenta['fecha_emision']))
+                ->diff(new \DateTimeImmutable((string) $cuenta['fecha_limite_descuento']))->days
+            : '';
+
+        return $this->renderForm($id, [
+            'id_proveedor' => $cuenta['id_proveedor'] ?? '',
+            'numero_factura' => $cuenta['numero_factura'] ?? '',
+            'fecha_emision' => substr((string) ($cuenta['fecha_emision'] ?? ''), 0, 10),
+            'dias_credito' => $cuenta['dias_credito'] ?? '',
+            'pct_descuento_pronto_pago' => $pct,
+            'dias_descuento' => $diasDescuento,
+            'codigo_erp' => $cuenta['codigo_erp'] ?? '',
+            'detalle' => array_map(static fn (array $linea): array => [
+                'descripcion' => $linea['descripcion'] ?? '',
+                'cantidad' => $linea['cantidad'] ?? 1,
+                'precio_unitario' => $linea['precio_unitario'] ?? 0,
+                'pct_impuesto' => $linea['pct_impuesto'] ?? 0,
+            ], $cuenta['detalle'] ?? []),
+        ], null);
+    }
+
+    public function update(Request $request, array $params = []): Response
+    {
+        Auth::requireLogin();
+        $id = $this->id($params);
+        $old = $request->postAll();
+
+        try {
+            ApiClient::forSession()->put('/api/cuentas/' . $id, $this->payload($old));
+            flash('success', 'Factura modificada. Totales y vencimiento recalculados.');
+
+            return Response::redirect('/cuentas/' . $id);
+        } catch (ApiException $exception) {
+            if ($exception->statusCode() === 401) {
+                throw $exception;
+            }
+
+            return $this->renderForm($id, $old, $exception->getMessage(), 422);
+        }
+    }
+
+    /**
+     * @param array<string, mixed> $old
+     */
+    private function renderForm(int $id, array $old, ?string $error, int $status = 200): Response
+    {
+        $providers = ApiClient::forSession()->get('/api/proveedores?' . http_build_query([
+            'per_page' => 100,
+            'estado' => 1,
+        ]));
+
+        return Response::html(View::render('cuentas/create', [
+            'pageTitle' => 'Modificar factura',
+            'providers' => $providers['items'] ?? [],
+            'old' => $old,
+            'error' => $error,
+            'cuentaId' => $id,
+        ]), $status);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function fetchCuenta(int $id): array
+    {
+        try {
+            return ApiClient::forSession()->get('/api/cuentas/' . $id);
+        } catch (ApiException $exception) {
+            if ($exception->statusCode() === 404) {
+                throw new HttpException('Cuenta por pagar no encontrada.', 404);
+            }
+            throw $exception;
+        }
+    }
+
     public function show(Request $request, array $params = []): Response
     {
         Auth::requireLogin();

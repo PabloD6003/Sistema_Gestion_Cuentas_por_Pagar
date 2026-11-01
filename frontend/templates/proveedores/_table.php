@@ -30,7 +30,7 @@ $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
                 <?php foreach ($items as $item): ?>
                     <tr>
                         <td>
-                            <strong><?= e($item['razon_social'] ?? '—') ?></strong>
+                            <a href="/proveedores/<?= (int) ($item['id_proveedor'] ?? 0) ?>" class="has-text-weight-semibold"><?= e($item['razon_social'] ?? '—') ?></a>
                             <p class="is-size-7 has-text-grey"><?= e($item['identificacion_tributaria'] ?? '') ?></p>
                         </td>
                         <td>

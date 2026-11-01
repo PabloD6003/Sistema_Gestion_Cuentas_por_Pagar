@@ -4,17 +4,26 @@ if ($lineas === []) {
     $lineas = [['descripcion' => '', 'cantidad' => 1, 'precio_unitario' => '', 'pct_impuesto' => 13]];
 }
 $fechaEmision = old($old, 'fecha_emision', date('Y-m-d'));
+// La misma plantilla sirve para registrar y para modificar una factura sin pagos
+$cuentaId = (int) ($cuentaId ?? 0);
+$esEdicion = $cuentaId > 0;
+$formAction = $esEdicion ? '/cuentas/' . $cuentaId . '/editar' : '/cuentas';
+$volver = $esEdicion ? '/cuentas/' . $cuentaId : '/cuentas';
 ?>
 <div class="level mb-5">
     <div class="level-left">
         <div>
-            <p class="app-section-eyebrow">Registro</p>
-            <h2 class="title is-4 mb-1">Nueva factura</h2>
-            <p class="has-text-grey">La factura se registra en el OLTP; el descuento por pronto pago es opcional.</p>
+            <p class="app-section-eyebrow"><?= $esEdicion ? 'Modificación' : 'Registro' ?></p>
+            <h2 class="title is-4 mb-1"><?= $esEdicion ? 'Modificar factura' : 'Nueva factura' ?></h2>
+            <p class="has-text-grey">
+                <?= $esEdicion
+                    ? 'Solo se puede modificar mientras no tenga pagos vigentes; los totales y el vencimiento se recalculan.'
+                    : 'La factura se registra en el OLTP; el descuento por pronto pago es opcional.' ?>
+            </p>
         </div>
     </div>
     <div class="level-right">
-        <a class="button is-light" href="/cuentas">Volver</a>
+        <a class="button is-light" href="<?= e($volver) ?>">Volver</a>
     </div>
 </div>
 
@@ -22,7 +31,7 @@ $fechaEmision = old($old, 'fecha_emision', date('Y-m-d'));
     <div class="notification is-danger is-light"><?= e($error) ?></div>
 <?php endif; ?>
 
-<form method="post" action="/cuentas" id="factura-form">
+<form method="post" action="<?= e($formAction) ?>" id="factura-form">
     <?= csrf_field() ?>
 
     <div class="columns is-variable is-6">
@@ -73,7 +82,7 @@ $fechaEmision = old($old, 'fecha_emision', date('Y-m-d'));
                         <div class="field">
                             <label class="label is-small" for="dias_credito">Días de crédito</label>
                             <div class="control">
-                                <input class="input" id="dias_credito" name="dias_credito" type="number" min="0"
+                                <input class="input" id="dias_credito" name="dias_credito" type="number" min="0" max="365"
                                        value="<?= e(old($old, 'dias_credito', 30)) ?>">
                             </div>
                             <p class="help">Si se deja vacío, se usan los días configurados en el proveedor.</p>
@@ -158,8 +167,8 @@ $fechaEmision = old($old, 'fecha_emision', date('Y-m-d'));
                     El total se calcula con el impuesto de cada línea. El descuento por pronto pago se aplica al registrar el pago dentro del plazo indicado.
                 </div>
 
-                <button class="button is-primary is-fullwidth is-medium mt-4" type="submit">Registrar factura</button>
-                <a class="button is-light is-fullwidth mt-2" href="/cuentas">Cancelar</a>
+                <button class="button is-primary is-fullwidth is-medium mt-4" type="submit"><?= $esEdicion ? 'Guardar cambios' : 'Registrar factura' ?></button>
+                <a class="button is-light is-fullwidth mt-2" href="<?= e($volver) ?>">Cancelar</a>
             </div>
         </div>
     </div>
