@@ -29,6 +29,30 @@ try {
 }
 
 try {
+    Validator::int('400', 'dias_credito', 0, Validator::MAX_DIAS_CREDITO);
+    check(false, 'Más de 365 días de crédito debe fallar');
+} catch (HttpException $exception) {
+    check($exception->getStatusCode() === 422, 'Días de crédito fuera de rango debe ser 422');
+}
+
+try {
+    Validator::int('99999999999', 'id', 1);
+    check(false, 'Un entero mayor que INT debe fallar');
+} catch (HttpException $exception) {
+    check($exception->getStatusCode() === 422, 'Entero fuera de INT debe ser 422');
+}
+
+$hoy = (new DateTimeImmutable('today'))->format('Y-m-d');
+check(Validator::notFuture($hoy, 'fecha') === $hoy, 'La fecha de hoy es válida');
+
+try {
+    Validator::notFuture((new DateTimeImmutable('tomorrow'))->format('Y-m-d'), 'fecha');
+    check(false, 'Una fecha futura debe fallar');
+} catch (HttpException $exception) {
+    check($exception->getStatusCode() === 422, 'Fecha futura debe ser 422');
+}
+
+try {
     Validator::required(['a' => 1], ['a', 'b']);
     check(false, 'Un campo faltante debe fallar');
 } catch (HttpException $exception) {

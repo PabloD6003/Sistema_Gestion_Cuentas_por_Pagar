@@ -154,11 +154,11 @@ final class CuentaPagarRepository
         return (int) ($rows[0]['id_cuenta_pagar'] ?? 0);
     }
 
-    public function annul(int $id, int $userId): void
+    public function annul(int $id, string $motivo, int $userId): void
     {
         Database::execute(
-            'EXEC dbo.sp_cuenta_pagar_anular @id_cuenta_pagar = ?, @id_usuario = ?;',
-            [$id, $userId]
+            'EXEC dbo.sp_cuenta_pagar_anular @id_cuenta_pagar = ?, @motivo = ?, @id_usuario = ?;',
+            [$id, $motivo, $userId]
         );
     }
 }

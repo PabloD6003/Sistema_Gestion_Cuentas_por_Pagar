@@ -107,7 +107,7 @@ final class ProveedorController
             'telefono' => Validator::string($data['telefono'], 'telefono', 30),
             'correo' => $correo,
             'contacto_nombre' => Validator::string($data['contacto_nombre'] ?? null, 'contacto_nombre', 120, false),
-            'dias_credito' => Validator::int($data['dias_credito'] ?? 30, 'dias_credito', 0),
+            'dias_credito' => Validator::int($data['dias_credito'] ?? 30, 'dias_credito', 0, Validator::MAX_DIAS_CREDITO),
             'banco' => Validator::string($data['banco'], 'banco', 80),
             'cuenta_bancaria' => Validator::string($data['cuenta_bancaria'], 'cuenta_bancaria', 34),
             'estado' => Validator::bool($data['estado'] ?? true, true) ? 1 : 0,

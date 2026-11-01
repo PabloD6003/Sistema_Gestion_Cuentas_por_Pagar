@@ -51,7 +51,7 @@ final class MovimientoController
 
         $fechaPago = null;
         if (isset($data['fecha_pago']) && $data['fecha_pago'] !== '') {
-            $fechaPago = Validator::date($data['fecha_pago'], 'fecha_pago');
+            $fechaPago = Validator::notFuture(Validator::date($data['fecha_pago'], 'fecha_pago'), 'fecha_pago');
         }
 
         $idProgramacion = null;
