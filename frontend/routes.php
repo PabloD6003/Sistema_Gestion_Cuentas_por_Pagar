@@ -30,6 +30,7 @@ $router->get('/dashboard', [DashboardController::class, 'index']);
 $router->get('/proveedores', [ProveedorController::class, 'index']);
 $router->post('/proveedores', [ProveedorController::class, 'store']);
 $router->get('/partials/proveedores', [ProveedorController::class, 'partial']);
+$router->get('/partials/hacienda', [ProveedorController::class, 'hacienda']);
 $router->get('/proveedores/{id}', [ProveedorController::class, 'show']);
 $router->post('/proveedores/{id}/evaluaciones', [ProveedorController::class, 'evaluar']);
 

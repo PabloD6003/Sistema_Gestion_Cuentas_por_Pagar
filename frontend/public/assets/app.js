@@ -128,10 +128,39 @@
         });
     }
 
+    // Consulta a Hacienda en el formulario de proveedor: llena la razón social si está vacía
+    // y permite reemplazarla con el botón "Usar este nombre".
+    function initHacienda() {
+        const result = document.getElementById('hacienda-resultado');
+        const razonSocial = document.getElementById('razon_social');
+
+        if (!result || !razonSocial) {
+            return;
+        }
+
+        function nombre() {
+            return result.querySelector('[data-hacienda-nombre]')?.dataset.haciendaNombre || '';
+        }
+
+        result.addEventListener('htmx:afterSwap', function () {
+            if (razonSocial.value.trim() === '' && nombre() !== '') {
+                razonSocial.value = nombre();
+            }
+        });
+
+        result.addEventListener('click', function (event) {
+            if (event.target.closest('[data-hacienda-usar]') && nombre() !== '') {
+                razonSocial.value = nombre();
+                razonSocial.focus();
+            }
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         initLineItems();
         initPaymentDiscount();
         initReportTabs();
         initFlashClose();
+        initHacienda();
     });
 })();

@@ -30,7 +30,7 @@ El navegador solo se comunica con el frontend. La sesión del API se conserva en
 ## Requisitos
 
 - PHP 8.4 o superior.
-  - API: extensiones `pdo_odbc` y `odbc`.
+  - API: extensiones `pdo_odbc`, `odbc` y `curl` (esta última para consultar Hacienda).
   - Frontend: extensión `curl`.
 - SQL Server 2019 o superior (Express es suficiente).
 - Microsoft ODBC Driver 18 for SQL Server.
@@ -129,7 +129,7 @@ Abra dos terminales en la raíz del repositorio.
 **Terminal 1 — API:**
 
 ```powershell
-php -d extension=php_odbc.dll -d extension=php_pdo_odbc.dll -S localhost:8000 -t backend/public backend/public/index.php
+php -d extension=php_odbc.dll -d extension=php_pdo_odbc.dll -d extension=php_curl.dll -S localhost:8000 -t backend/public backend/public/index.php
 ```
 
 **Terminal 2 — Interfaz:**
@@ -168,7 +168,7 @@ Administrador y Tesorero pueden aprobar pagos; el Contador puede registrar factu
 
 | Módulo | Roles | Funciones |
 |---|---|---|
-| Proveedores | Todos | Catálogo, expediente con historial de pagos, calificación promedio y evaluaciones de la relación comercial. |
+| Proveedores | Todos | Catálogo, consulta de la cédula en Hacienda al registrar, expediente con historial de pagos, calificación promedio y evaluaciones de la relación comercial. |
 | Cuentas por pagar | Todos (anular: Tesorero y Administrador) | Registro de facturas, modificación mientras no tengan pagos vigentes, pagos y anulaciones. |
 | Pagos | Todos (aprobar y anular: Tesorero y Administrador) | Aprobación de pagos; el descuento por pronto pago se aprueba junto con su pago. |
 | Tesorería | Tesorero y Administrador | Lotes de transferencia por banco (generar, enviar, procesar, rechazar) y conciliación del extracto bancario. |
@@ -188,6 +188,15 @@ Fecha;Referencia;Monto
 ```
 
 Cada línea se concilia con un pago aprobado del mismo banco que tenga igual referencia y monto, y cuya fecha difiera como máximo en la tolerancia indicada (3 días por defecto). El resultado muestra qué líneas se conciliaron y cuáles no tienen coincidencia.
+
+### Consulta a Hacienda
+
+Al escribir la identificación tributaria en **Agregar proveedor**, la API consulta la API pública de Hacienda (`https://api.hacienda.go.cr/fe/ae`) y muestra el nombre del contribuyente, el tipo de identificación, el régimen, si está inscrito, moroso u omiso, y su actividad económica principal. Si la razón social está vacía se llena con el nombre de Hacienda; si no, el botón **Usar este nombre** la reemplaza.
+
+- Se aceptan cédulas con o sin guiones; se consultan solo los dígitos (9 a 12).
+- Si la identificación no está inscrita, o Hacienda no responde, se muestra un aviso y el registro continúa normalmente.
+- Para probar, `3101000046` (CNFL) devuelve datos; una cédula ficticia como `888888888` aparece como no inscrita.
+- La configuración está en `backend/.env` (`HACIENDA_API_URL`, `HACIENDA_TIMEOUT`, `HACIENDA_CA_BUNDLE`). En Windows, PHP usa el almacén de certificados del sistema para verificar el HTTPS; en otros sistemas, si falla la verificación, indique un archivo `.pem` en `HACIENDA_CA_BUNDLE`.
 
 ## Respaldos
 
@@ -209,6 +218,7 @@ La cuenta con la que la API se conecta a SQL Server necesita permiso para respal
 php backend/tests/router_test.php
 php backend/tests/validator_test.php
 php backend/tests/sql_error_test.php
+php backend/tests/hacienda_test.php
 php frontend/tests/router_test.php
 php frontend/tests/format_test.php
 ```

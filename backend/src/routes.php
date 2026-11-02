@@ -6,6 +6,7 @@ use App\Controllers\AuthController;
 use App\Controllers\CatalogoController;
 use App\Controllers\CuentaPagarController;
 use App\Controllers\DashboardController;
+use App\Controllers\HaciendaController;
 use App\Controllers\HealthController;
 use App\Controllers\MovimientoController;
 use App\Controllers\ProveedorController;
@@ -46,6 +47,8 @@ $router->get('/api/lotes', [MovimientoController::class, 'lotes']);
 $router->post('/api/lotes', [MovimientoController::class, 'generarLote']);
 $router->post('/api/lotes/{id}/estado', [MovimientoController::class, 'cambiarEstadoLote']);
 $router->post('/api/conciliaciones', [MovimientoController::class, 'conciliar']);
+
+$router->get('/api/hacienda/contribuyentes/{identificacion}', [HaciendaController::class, 'contribuyente']);
 
 $router->get('/api/catalogos', [CatalogoController::class, 'index']);
 $router->get('/api/dashboard', [DashboardController::class, 'index']);

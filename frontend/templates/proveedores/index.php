@@ -37,8 +37,12 @@ $abrirFormulario = !empty($error) || !empty($old);
                     <label class="label is-small" for="identificacion_tributaria">Identificación tributaria *</label>
                     <div class="control">
                         <input class="input" id="identificacion_tributaria" name="identificacion_tributaria" required
-                               value="<?= e(old($old, 'identificacion_tributaria')) ?>" placeholder="3-101-123456">
+                               value="<?= e(old($old, 'identificacion_tributaria')) ?>" placeholder="3-101-123456"
+                               hx-get="/partials/hacienda" hx-trigger="change" hx-target="#hacienda-resultado"
+                               hx-indicator="#hacienda-cargando">
                     </div>
+                    <p class="help htmx-indicator has-text-grey" id="hacienda-cargando">Consultando Hacienda…</p>
+                    <div id="hacienda-resultado" aria-live="polite"></div>
                 </div>
             </div>
             <div class="column is-4-desktop is-6-tablet">

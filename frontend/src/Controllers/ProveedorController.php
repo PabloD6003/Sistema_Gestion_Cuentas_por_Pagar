@@ -41,6 +41,36 @@ final class ProveedorController
         ], null));
     }
 
+    /** Resultado de la consulta a Hacienda para el formulario de proveedor (HTMX). */
+    public function hacienda(Request $request, array $params = []): Response
+    {
+        Auth::requireLogin();
+        $identificacion = preg_replace('/\D+/', '', (string) $request->query('identificacion_tributaria', ''));
+
+        if ($identificacion === '') {
+            return Response::html('');
+        }
+
+        try {
+            $resultado = ApiClient::forSession()->get('/api/hacienda/contribuyentes/' . $identificacion);
+        } catch (ApiException $exception) {
+            if ($exception->statusCode() === 401) {
+                throw $exception;
+            }
+
+            $formato = $exception->statusCode() === 422;
+            $resultado = [
+                'estado' => $formato ? 'formato' : 'no_disponible',
+                'mensaje' => $formato
+                    ? 'La identificación debe tener entre 9 y 12 dígitos para consultarla en Hacienda.'
+                    : 'No se pudo consultar Hacienda en este momento. Puede continuar con el registro.',
+                'contribuyente' => null,
+            ];
+        }
+
+        return Response::html(View::render('proveedores/_hacienda', ['resultado' => $resultado], null));
+    }
+
     public function store(Request $request, array $params = []): Response
     {
         Auth::requireLogin();

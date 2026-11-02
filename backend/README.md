@@ -81,6 +81,7 @@ Invoke-RestMethod http://localhost:8000/api/health
 | POST | `/api/pagos/{id}/aprobar` | Aprueba un pago o descuento. |
 | POST | `/api/pagos/{id}/anular` | Anula pago y descuento en una transacción. |
 | POST | `/api/movimientos/{id}/anular` | Anula un movimiento sin descuento. |
+| GET | `/api/hacienda/contribuyentes/{identificacion}` | Consulta el contribuyente en Hacienda: `estado` es `encontrado`, `no_encontrado` o `invalido` (200), o `no_disponible` (503). |
 | GET | `/api/catalogos` | Bancos, métodos, tipos de pago, estados y roles. |
 | GET | `/api/dashboard` | Resumen de cuentas abiertas, vencidas y pagos del mes. |
 | GET | `/api/reportes/aging` | Antigüedad actual desde el DW. |
@@ -108,6 +109,7 @@ backend/
     Security/               Auth y CSRF
     Repositories/           Acceso a datos
     Controllers/            Endpoints
+    Services/               Clientes de servicios externos (Hacienda)
     Support/                Validación, errores, logger
   tests/                    Pruebas sin framework
   bootstrap.php
@@ -119,4 +121,5 @@ backend/
 ```powershell
 php backend/tests/router_test.php
 php backend/tests/validator_test.php
+php backend/tests/hacienda_test.php
 ```
