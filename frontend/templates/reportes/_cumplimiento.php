@@ -18,14 +18,14 @@
         </div>
     <?php else: ?>
         <div class="table-container">
-            <table class="table is-fullwidth is-hoverable is-narrow">
+            <table class="table is-fullwidth is-hoverable is-narrow app-report-table">
                 <thead>
                     <tr>
-                        <th>Mes</th>
-                        <th class="has-text-right">Pagos</th>
-                        <th class="has-text-right">En plazo</th>
-                        <th class="has-text-right">Tarde</th>
-                        <th>Cumplimiento</th>
+                        <th scope="col">Mes</th>
+                        <th scope="col" class="has-text-right">Pagos</th>
+                        <th scope="col" class="has-text-right">En plazo</th>
+                        <th scope="col" class="has-text-right">Tarde</th>
+                        <th scope="col">Cumplimiento</th>
                     </tr>
                 </thead>
                 <tbody>

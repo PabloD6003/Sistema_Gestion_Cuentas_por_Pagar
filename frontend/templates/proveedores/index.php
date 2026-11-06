@@ -154,23 +154,23 @@ $abrirFormulario = !empty($error) || !empty($old);
             <h3 class="title is-5 mb-0">Listado</h3>
         </div>
         <div class="level-right">
-            <span class="tag is-light" id="proveedores-total"><?= e((string) ($total ?? 0)) ?> <?= ((int) ($total ?? 0)) === 1 ? 'registro' : 'registros' ?></span>
+            <span class="tag is-light" id="proveedores-total" role="status" aria-live="polite"><?= e((string) ($total ?? 0)) ?> <?= ((int) ($total ?? 0)) === 1 ? 'registro' : 'registros' ?></span>
         </div>
     </div>
 
     <form id="proveedores-filtros" class="filters" method="get" action="/proveedores">
         <div class="field has-addons">
             <div class="control is-expanded">
-                <input class="input" type="search" name="q" value="<?= e($filters['q'] ?? '') ?>"
+                <input class="input" type="search" name="q" aria-label="Buscar" value="<?= e($filters['q'] ?? '') ?>"
                        placeholder="Buscar por razón social o identificación"
                        hx-get="/partials/proveedores" hx-trigger="input changed delay:400ms, search"
-                       hx-target="#proveedores-tabla" hx-include="#proveedores-filtros">
+                       hx-target="#proveedores-tabla" hx-indicator="#proveedores-cargando" hx-include="#proveedores-filtros">
             </div>
             <div class="control">
                 <div class="select">
                     <select name="estado"
                             hx-get="/partials/proveedores" hx-trigger="change"
-                            hx-target="#proveedores-tabla" hx-include="#proveedores-filtros">
+                            hx-target="#proveedores-tabla" hx-indicator="#proveedores-cargando" hx-include="#proveedores-filtros">
                         <option value="">Todos</option>
                         <option value="1" <?= ($filters['estado'] ?? '') === '1' ? 'selected' : '' ?>>Activos</option>
                         <option value="0" <?= ($filters['estado'] ?? '') === '0' ? 'selected' : '' ?>>Inactivos</option>
@@ -183,6 +183,7 @@ $abrirFormulario = !empty($error) || !empty($old);
         </div>
     </form>
 
+    <span id="proveedores-cargando" class="htmx-indicator has-text-grey is-size-7">Actualizando resultados…</span>
     <div id="proveedores-tabla">
         <?php require APP_BASE_PATH . '/templates/proveedores/_table.php'; ?>
     </div>

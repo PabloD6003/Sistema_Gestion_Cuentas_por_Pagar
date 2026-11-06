@@ -49,11 +49,11 @@ $tipos = [
         <table class="table is-fullwidth is-hoverable is-narrow">
             <thead>
                 <tr>
-                    <th>Fecha</th>
-                    <th>Tipo</th>
-                    <th class="has-text-right">Tamaño</th>
-                    <th>Generado por</th>
-                    <th>Archivo</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col" class="has-text-right">Tamaño</th>
+                    <th scope="col">Generado por</th>
+                    <th scope="col">Archivo</th>
                 </tr>
             </thead>
             <tbody>

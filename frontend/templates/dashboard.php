@@ -179,13 +179,13 @@ $bucketColors = [
         <table class="table is-fullwidth is-hoverable is-narrow app-recent-table">
             <thead>
                 <tr>
-                    <th>Factura</th>
-                    <th>Proveedor</th>
-                    <th>Vence</th>
-                    <th class="has-text-right">Total</th>
-                    <th class="has-text-right">Saldo</th>
-                    <th>Estado</th>
-                    <th></th>
+                    <th scope="col">Factura</th>
+                    <th scope="col">Proveedor</th>
+                    <th scope="col">Vence</th>
+                    <th scope="col" class="has-text-right">Total</th>
+                    <th scope="col" class="has-text-right">Saldo</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>

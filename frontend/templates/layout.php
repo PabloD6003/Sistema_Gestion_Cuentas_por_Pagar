@@ -20,6 +20,14 @@ if (\App\Auth::canApprove()) {
 if (\App\Auth::isAdmin()) {
     $navItems[] = ['path' => '/respaldos', 'label' => 'Respaldos', 'hint' => 'Copias de seguridad'];
 }
+
+$currentHint = 'Resumen general';
+foreach ($navItems as $item) {
+    if (is_active_path($item['path'], $currentPath)) {
+        $currentHint = $item['hint'];
+        break;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es" data-theme="light" class="theme-light">
@@ -31,7 +39,8 @@ if (\App\Auth::isAdmin()) {
     <meta name="color-scheme" content="light">
     <title><?= e($pageTitle ?? 'Inicio') ?> · <?= e($appName) ?></title>
     <meta name="csrf-token" content="<?= e(\App\Security\Csrf::token()) ?>">
-    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/assets/img/favicon-32.png" sizes="32x32" type="image/png">
+    <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
     <link rel="stylesheet" href="/assets/vendor/bulma.min.css">
     <link rel="stylesheet" href="/assets/app.css">
     <script src="/assets/vendor/htmx.min.js" defer></script>
@@ -39,23 +48,27 @@ if (\App\Auth::isAdmin()) {
 </head>
 <body data-currency="<?= e((string) \App\Config::get('CURRENCY_SYMBOL', '₡')) ?>" class="<?= $auth ? 'app-body' : 'login-body' ?>">
 <?php if ($auth): ?>
+    <a class="app-skip-link" href="#contenido-principal">Saltar al contenido</a>
     <div class="app-shell">
         <aside class="app-sidebar">
             <div class="app-brand">
-                <span class="app-brand-mark">CxP</span>
-                <div>
+                <span class="app-brand-mark">
+                    <img src="/assets/img/logo-cp.png" alt="" width="640" height="351" decoding="async">
+                </span>
+                <div class="app-brand-copy">
+                    <span class="app-brand-kicker">Sistema CxP</span>
                     <p class="app-brand-title"><?= e($appName) ?></p>
                     <p class="app-brand-subtitle">Gestión financiera</p>
                 </div>
             </div>
 
-            <nav class="menu app-menu">
+            <nav class="menu app-menu" aria-label="Navegacion principal">
                 <p class="menu-label">Operación</p>
                 <ul class="menu-list">
                     <?php foreach ($navItems as $item): ?>
                         <?php $active = is_active_path($item['path'], $currentPath); ?>
                         <li>
-                            <a href="<?= e($item['path']) ?>" class="<?= $active ? 'is-active' : '' ?>">
+                            <a href="<?= e($item['path']) ?>" class="<?= $active ? 'is-active' : '' ?>"<?= $active ? ' aria-current="page"' : '' ?>>
                                 <span><?= e($item['label']) ?></span>
                                 <small><?= e($item['hint']) ?></small>
                             </a>
@@ -71,31 +84,39 @@ if (\App\Auth::isAdmin()) {
         </aside>
 
         <div class="app-main">
-            <header class="app-topbar">
-                <div>
-                    <p class="app-topbar-eyebrow">Sistema de cuentas por pagar</p>
-                    <h1 class="app-topbar-title"><?= e($pageTitle ?? 'Inicio') ?></h1>
-                </div>
-                <div class="app-user">
-                    <div class="app-user-copy">
-                        <strong><?= e($user['nombre_completo'] ?? $user['nombre_usuario'] ?? 'Usuario') ?></strong>
-                        <span><?= e($user['rol'] ?? '') ?></span>
+            <div class="app-header">
+                <header class="app-topbar">
+                    <div class="app-topbar-brand">
+                        <span class="app-topbar-mark">
+                            <img src="/assets/img/logo-cp.png" alt="" width="640" height="351" decoding="async">
+                        </span>
+                        <div class="app-topbar-heading">
+                            <p class="app-topbar-eyebrow"><?= e($currentHint) ?></p>
+                            <h1 class="app-topbar-title"><?= e($pageTitle ?? 'Inicio') ?></h1>
+                        </div>
                     </div>
-                    <span class="app-avatar"><?= e(strtoupper(substr((string) ($user['nombre_usuario'] ?? 'U'), 0, 1))) ?></span>
-                    <form method="post" action="/logout">
-                        <?= csrf_field() ?>
-                        <button class="button is-small is-light" type="submit">Salir</button>
-                    </form>
-                </div>
-            </header>
+                    <div class="app-user">
+                        <div class="app-user-copy">
+                            <strong><?= e($user['nombre_completo'] ?? $user['nombre_usuario'] ?? 'Usuario') ?></strong>
+                            <span><?= e($user['rol'] ?? '') ?></span>
+                        </div>
+                        <span class="app-avatar"><?= e(strtoupper(substr((string) ($user['nombre_usuario'] ?? 'U'), 0, 1))) ?></span>
+                        <form method="post" action="/logout">
+                            <?= csrf_field() ?>
+                            <button class="button is-small is-light" type="submit">Salir</button>
+                        </form>
+                    </div>
+                </header>
 
-            <nav class="app-mobile-nav">
-                <?php foreach ($navItems as $item): ?>
-                    <a href="<?= e($item['path']) ?>" class="<?= is_active_path($item['path'], $currentPath) ? 'is-active' : '' ?>"><?= e($item['label']) ?></a>
-                <?php endforeach; ?>
-            </nav>
+                <nav class="app-mobile-nav" aria-label="Navegacion principal (movil)">
+                    <?php foreach ($navItems as $item): ?>
+                        <?php $activeMovil = is_active_path($item['path'], $currentPath); ?>
+                        <a href="<?= e($item['path']) ?>" class="<?= $activeMovil ? 'is-active' : '' ?>"<?= $activeMovil ? ' aria-current="page"' : '' ?>><?= e($item['label']) ?></a>
+                    <?php endforeach; ?>
+                </nav>
+            </div>
 
-            <main class="section app-content">
+            <main class="section app-content" id="contenido-principal" tabindex="-1">
                 <div class="container is-fluid">
                     <?php foreach ($flashes as $flash): ?>
                         <?php
@@ -107,7 +128,7 @@ if (\App\Auth::isAdmin()) {
                             default => 'info',
                         };
                         ?>
-                        <div class="notification is-<?= e($flashType) ?> app-flash">
+                        <div class="notification is-<?= e($flashType) ?> app-flash" role="<?= $flashType === 'danger' ? 'alert' : 'status' ?>" aria-live="<?= $flashType === 'danger' ? 'assertive' : 'polite' ?>">
                             <button class="delete" type="button" aria-label="Cerrar"></button>
                             <?= e($flash['message']) ?>
                         </div>

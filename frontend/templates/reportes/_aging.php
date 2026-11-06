@@ -24,17 +24,17 @@ foreach ($items as $row) {
         </div>
     <?php else: ?>
         <div class="table-container">
-            <table class="table is-fullwidth is-hoverable is-narrow">
+            <table class="table is-fullwidth is-hoverable is-narrow app-report-table">
                 <thead>
                     <tr>
-                        <th>Proveedor</th>
-                        <th>Factura</th>
-                        <th>Emisión</th>
-                        <th>Vencimiento</th>
-                        <th>Estado</th>
-                        <th class="has-text-right">Saldo</th>
-                        <th class="has-text-right">Días vencido</th>
-                        <th>Bucket</th>
+                        <th scope="col">Proveedor</th>
+                        <th scope="col">Factura</th>
+                        <th scope="col">Emisión</th>
+                        <th scope="col">Vencimiento</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col" class="has-text-right">Saldo</th>
+                        <th scope="col" class="has-text-right">Días vencido</th>
+                        <th scope="col">Bucket</th>
                     </tr>
                 </thead>
                 <tbody>

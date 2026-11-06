@@ -49,13 +49,13 @@ foreach ($bancos as $banco) {
                 <table class="table is-fullwidth is-hoverable is-narrow">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Banco</th>
-                            <th>Fecha</th>
-                            <th class="has-text-right">Pagos</th>
-                            <th class="has-text-right">Monto</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Banco</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col" class="has-text-right">Pagos</th>
+                            <th scope="col" class="has-text-right">Monto</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -108,7 +108,7 @@ foreach ($bancos as $banco) {
                 <div class="table-container">
                     <table class="table is-fullwidth is-narrow">
                         <thead>
-                            <tr><th>Línea</th><th>Fecha</th><th>Referencia</th><th class="has-text-right">Monto</th><th>Pago</th><th>Resultado</th></tr>
+                            <tr><th scope="col">Línea</th><th scope="col">Fecha</th><th scope="col">Referencia</th><th scope="col" class="has-text-right">Monto</th><th scope="col">Pago</th><th scope="col">Resultado</th></tr>
                         </thead>
                         <tbody>
                             <?php foreach ($conciliacion['items'] as $linea): ?>

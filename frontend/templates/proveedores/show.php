@@ -166,12 +166,12 @@ $etiquetas = [5 => 'Excelente', 4 => 'Buena', 3 => 'Regular', 2 => 'Deficiente',
                 <table class="table is-fullwidth is-hoverable app-table">
                     <thead>
                         <tr>
-                            <th>Fecha</th>
-                            <th>Factura</th>
-                            <th>Tipo</th>
-                            <th>Referencia</th>
-                            <th class="has-text-right">Monto</th>
-                            <th>Conciliación</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Factura</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Referencia</th>
+                            <th scope="col" class="has-text-right">Monto</th>
+                            <th scope="col">Conciliación</th>
                         </tr>
                     </thead>
                     <tbody>

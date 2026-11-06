@@ -12,28 +12,35 @@
 </div>
 
 <div class="box app-panel">
+    <?php if (empty($canApprove)): ?>
+        <?php /* Sin esto el usuario ve una columna entera de "Sin acciones" sin saber por que */ ?>
+        <p class="notification is-info is-light py-2 px-3 is-size-7 mb-4">
+            Su rol permite registrar pagos, pero no aprobarlos ni anularlos. Esas acciones
+            corresponden al Tesorero o al Administrador.
+        </p>
+    <?php endif; ?>
     <div class="level mb-4">
         <div class="level-left">
             <h3 class="title is-5 mb-0">Movimientos</h3>
         </div>
         <div class="level-right">
-            <span class="tag is-light" id="pagos-total"><?= e((string) ($total ?? 0)) ?> <?= ((int) ($total ?? 0)) === 1 ? 'registro' : 'registros' ?></span>
+            <span class="tag is-light" id="pagos-total" role="status" aria-live="polite"><?= e((string) ($total ?? 0)) ?> <?= ((int) ($total ?? 0)) === 1 ? 'registro' : 'registros' ?></span>
         </div>
     </div>
 
     <form id="pagos-filtros" class="filters" method="get" action="/pagos">
         <div class="field is-grouped is-grouped-multiline">
             <div class="control is-expanded">
-                <input class="input" type="search" name="q" value="<?= e($filters['q'] ?? '') ?>"
+                <input class="input" type="search" name="q" aria-label="Buscar" value="<?= e($filters['q'] ?? '') ?>"
                        placeholder="Buscar por factura, proveedor o referencia"
                        hx-get="/partials/pagos" hx-trigger="input changed delay:400ms, search"
-                       hx-target="#pagos-tabla" hx-include="#pagos-filtros">
+                       hx-target="#pagos-tabla" hx-indicator="#pagos-cargando" hx-include="#pagos-filtros">
             </div>
             <div class="control">
                 <div class="select">
                     <select name="estado"
                             hx-get="/partials/pagos" hx-trigger="change"
-                            hx-target="#pagos-tabla" hx-include="#pagos-filtros">
+                            hx-target="#pagos-tabla" hx-indicator="#pagos-cargando" hx-include="#pagos-filtros">
                         <option value="">Todos los estados</option>
                         <?php foreach (['REGISTRADO', 'APROBADO', 'ANULADO'] as $estado): ?>
                             <option value="<?= e($estado) ?>" <?= ($filters['estado'] ?? '') === $estado ? 'selected' : '' ?>><?= e($estado) ?></option>
@@ -45,7 +52,7 @@
                 <div class="select">
                     <select name="tipo"
                             hx-get="/partials/pagos" hx-trigger="change"
-                            hx-target="#pagos-tabla" hx-include="#pagos-filtros">
+                            hx-target="#pagos-tabla" hx-indicator="#pagos-cargando" hx-include="#pagos-filtros">
                         <option value="">Todos los tipos</option>
                         <option value="Pago" <?= ($filters['tipo'] ?? '') === 'Pago' ? 'selected' : '' ?>>Pago</option>
                         <option value="Descuento por pronto pago" <?= ($filters['tipo'] ?? '') === 'Descuento por pronto pago' ? 'selected' : '' ?>>Descuento pronto pago</option>
@@ -56,7 +63,7 @@
                 <div class="select">
                     <select name="conciliado"
                             hx-get="/partials/pagos" hx-trigger="change"
-                            hx-target="#pagos-tabla" hx-include="#pagos-filtros">
+                            hx-target="#pagos-tabla" hx-indicator="#pagos-cargando" hx-include="#pagos-filtros">
                         <option value="">Conciliación</option>
                         <option value="1" <?= ($filters['conciliado'] ?? '') === '1' ? 'selected' : '' ?>>Conciliados</option>
                         <option value="0" <?= ($filters['conciliado'] ?? '') === '0' ? 'selected' : '' ?>>No conciliados</option>
@@ -69,6 +76,7 @@
         </div>
     </form>
 
+    <span id="pagos-cargando" class="htmx-indicator has-text-grey is-size-7">Actualizando resultados…</span>
     <div id="pagos-tabla">
         <?php require APP_BASE_PATH . '/templates/pagos/_table.php'; ?>
     </div>

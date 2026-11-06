@@ -149,23 +149,23 @@ $volver = $esEdicion ? '/cuentas/' . $cuentaId : '/cuentas';
             <table class="table is-fullwidth is-narrow app-lines-table">
                 <thead>
                     <tr>
-                        <th>Descripción</th>
-                        <th class="is-2">Cantidad</th>
-                        <th class="is-2">Precio unitario</th>
-                        <th class="is-2">Impuesto %</th>
-                        <th class="has-text-right">Total</th>
-                        <th></th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col" class="is-2">Cantidad</th>
+                        <th scope="col" class="is-2">Precio unitario</th>
+                        <th scope="col" class="is-2">Impuesto %</th>
+                        <th scope="col" class="has-text-right">Total</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody id="detalle-lineas">
                     <?php foreach ($lineas as $i => $line): ?>
                         <tr class="linea">
-                            <td><input class="input is-small" name="detalle[<?= (int) $i ?>][descripcion]" required value="<?= e($line['descripcion'] ?? '') ?>" placeholder="Servicio o producto"></td>
-                            <td><input class="input is-small cantidad" name="detalle[<?= (int) $i ?>][cantidad]" type="number" min="0.0001" step="0.0001" required value="<?= e($line['cantidad'] ?? 1) ?>"></td>
-                            <td><input class="input is-small precio" name="detalle[<?= (int) $i ?>][precio_unitario]" type="number" min="0" step="0.0001" required value="<?= e($line['precio_unitario'] ?? '') ?>"></td>
-                            <td><input class="input is-small impuesto" name="detalle[<?= (int) $i ?>][pct_impuesto]" type="number" min="0" max="100" step="0.01" value="<?= e($line['pct_impuesto'] ?? 13) ?>"></td>
+                            <td><input class="input is-small" name="detalle[<?= (int) $i ?>][descripcion]" required aria-label="Descripcion de la linea <?= (int) $i + 1 ?>" value="<?= e($line['descripcion'] ?? '') ?>" placeholder="Servicio o producto"></td>
+                            <td><input class="input is-small cantidad" name="detalle[<?= (int) $i ?>][cantidad]" type="number" inputmode="decimal" min="0.0001" step="0.0001" required aria-label="Cantidad de la linea <?= (int) $i + 1 ?>" value="<?= e($line['cantidad'] ?? 1) ?>"></td>
+                            <td><input class="input is-small precio" name="detalle[<?= (int) $i ?>][precio_unitario]" type="number" inputmode="decimal" min="0" step="0.0001" required aria-label="Precio unitario de la linea <?= (int) $i + 1 ?>" value="<?= e($line['precio_unitario'] ?? '') ?>"></td>
+                            <td><input class="input is-small impuesto" name="detalle[<?= (int) $i ?>][pct_impuesto]" type="number" inputmode="decimal" min="0" max="100" step="0.01" aria-label="Porcentaje de impuesto de la linea <?= (int) $i + 1 ?>" value="<?= e($line['pct_impuesto'] ?? 13) ?>"></td>
                             <td class="has-text-right"><span class="linea-total has-text-weight-semibold">—</span></td>
-                            <td class="has-text-right"><button class="button is-small is-danger is-light remove-linea" type="button">×</button></td>
+                            <td class="has-text-right"><button class="button is-small is-danger is-light remove-linea" type="button" aria-label="Quitar esta linea">×</button></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -181,11 +181,11 @@ $volver = $esEdicion ? '/cuentas/' . $cuentaId : '/cuentas';
 
 <template id="linea-template">
     <tr class="linea">
-        <td><input class="input is-small" name="detalle[__INDEX__][descripcion]" required placeholder="Servicio o producto"></td>
-        <td><input class="input is-small cantidad" name="detalle[__INDEX__][cantidad]" type="number" min="0.0001" step="0.0001" required value="1"></td>
-        <td><input class="input is-small precio" name="detalle[__INDEX__][precio_unitario]" type="number" min="0" step="0.0001" required value=""></td>
-        <td><input class="input is-small impuesto" name="detalle[__INDEX__][pct_impuesto]" type="number" min="0" max="100" step="0.01" value="13"></td>
+        <td><input class="input is-small" name="detalle[__INDEX__][descripcion]" required aria-label="Descripcion de la linea" placeholder="Servicio o producto"></td>
+        <td><input class="input is-small cantidad" name="detalle[__INDEX__][cantidad]" type="number" inputmode="decimal" min="0.0001" step="0.0001" required aria-label="Cantidad de la linea" value="1"></td>
+        <td><input class="input is-small precio" name="detalle[__INDEX__][precio_unitario]" type="number" inputmode="decimal" min="0" step="0.0001" required aria-label="Precio unitario de la linea" value=""></td>
+        <td><input class="input is-small impuesto" name="detalle[__INDEX__][pct_impuesto]" type="number" inputmode="decimal" min="0" max="100" step="0.01" aria-label="Porcentaje de impuesto de la linea" value="13"></td>
         <td class="has-text-right"><span class="linea-total has-text-weight-semibold">—</span></td>
-        <td class="has-text-right"><button class="button is-small is-danger is-light remove-linea" type="button">×</button></td>
+        <td class="has-text-right"><button class="button is-small is-danger is-light remove-linea" type="button" aria-label="Quitar esta linea">×</button></td>
     </tr>
 </template>

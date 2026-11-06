@@ -53,12 +53,12 @@ $porMes = ($agrupacion ?? 'SEMANA') === 'MES';
             <table class="table is-fullwidth is-hoverable is-narrow">
                 <thead>
                     <tr>
-                        <th><?= $porMes ? 'Mes' : 'Semana del' ?></th>
-                        <th class="has-text-right">Cuentas vencidas</th>
-                        <th class="has-text-right">Cuentas por vencer</th>
-                        <th class="has-text-right">Pagos programados</th>
-                        <th class="has-text-right">Total del periodo</th>
-                        <th class="has-text-right">Acumulado</th>
+                        <th scope="col"><?= $porMes ? 'Mes' : 'Semana del' ?></th>
+                        <th scope="col" class="has-text-right">Cuentas vencidas</th>
+                        <th scope="col" class="has-text-right">Cuentas por vencer</th>
+                        <th scope="col" class="has-text-right">Pagos programados</th>
+                        <th scope="col" class="has-text-right">Total del periodo</th>
+                        <th scope="col" class="has-text-right">Acumulado</th>
                     </tr>
                 </thead>
                 <tbody>

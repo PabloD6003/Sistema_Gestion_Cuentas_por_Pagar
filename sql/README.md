@@ -28,6 +28,17 @@ Ejecute los scripts con `sqlcmd` (o desde SSMS) en el orden indicado. Todos los 
    - Crea los procedimientos de consulta que usa la API (listados, detalles, catálogos, panel y perfil).
    - Leen las vistas de `02_lectura.sql`; la API ya no hace `SELECT` directos.
    - Otorga `EXECUTE` a los roles de la aplicación. Es idempotente.
+6. `oltp/04_datos_demo.sql` *(opcional)*
+   - Carga el escenario de demostración: bancos y tipos de pago reales, 10 proveedores,
+     14 facturas en todos los estados y rangos de antigüedad, pagos totales y parciales,
+     un descuento por pronto pago, 4 programaciones y 10 evaluaciones.
+   - Registra todo con los procedimientos almacenados, por lo que se aplican las
+     validaciones, los triggers de auditoría y la segregación de funciones
+     (el contador registra el pago y el tesorero lo aprueba).
+   - Las fechas se calculan hacia atrás desde la fecha de ejecución, así que el
+     escenario conserva los mismos rangos de antigüedad sin importar cuándo se cargue.
+   - Es idempotente: al repetirlo no duplica registros.
+   - Después de cargarlo, vuelva a ejecutar el ETL para que los reportes lo reflejen.
 
 ### Data Warehouse
 
@@ -61,6 +72,7 @@ sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\01_correcciones.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\02_lectura.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\03_usuarios_demo.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\04_consultas.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\oltp\04_datos_demo.sql
 
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\01_schema_dw.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -i sql\dw\02_dim_tiempo.sql

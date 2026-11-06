@@ -128,10 +128,21 @@
         });
     }
 
+    function updateTableHints() {
+        document.querySelectorAll('.table-container').forEach(function (container) {
+            container.classList.remove('is-scrollable');
+            container.classList.toggle('is-scrollable', container.scrollWidth > container.clientWidth + 1);
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         initLineItems();
         initPaymentDiscount();
         initReportTabs();
         initFlashClose();
+        updateTableHints();
     });
+
+    window.addEventListener('resize', updateTableHints);
+    document.body.addEventListener('htmx:afterSwap', updateTableHints);
 })();

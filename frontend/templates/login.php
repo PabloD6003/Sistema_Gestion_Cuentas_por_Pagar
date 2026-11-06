@@ -1,7 +1,7 @@
 <section class="login-hero">
     <div class="login-card box">
         <div class="has-text-centered mb-5">
-            <span class="login-mark">CxP</span>
+            <img class="login-logo" src="/assets/img/logo-cp.png" alt="" width="640" height="351">
             <h1 class="title is-4 mt-3">Cuentas por Pagar</h1>
             <p class="subtitle is-6 has-text-grey">Acceso al sistema de gestión financiera</p>
         </div>
@@ -20,7 +20,8 @@
                 <label class="label" for="nombre_usuario">Usuario</label>
                 <div class="control">
                     <input class="input is-medium" id="nombre_usuario" name="nombre_usuario" type="text"
-                           value="<?= e($username ?? '') ?>" placeholder="admin" required autofocus>
+                           value="<?= e($username ?? '') ?>" placeholder="admin" required autofocus
+                           autocomplete="username" autocapitalize="none" spellcheck="false">
                 </div>
             </div>
 
@@ -28,7 +29,7 @@
                 <label class="label" for="contrasena">Contraseña</label>
                 <div class="control">
                     <input class="input is-medium" id="contrasena" name="contrasena" type="password"
-                           placeholder="••••••••" required>
+                           placeholder="••••••••" required autocomplete="current-password">
                 </div>
             </div>
 

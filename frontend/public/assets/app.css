@@ -1,8 +1,9 @@
 :root {
     color-scheme: light;
     --app-ink: #0f172a;
-    --app-muted: #64748b;
+    --app-muted: #5b6b82;
     --app-line: #e2e8f0;
+    --app-control-line: #7d8fa8;
     --app-soft: #f5f7fb;
     --app-primary: #1d4ed8;
     --app-primary-soft: #eff6ff;
@@ -16,7 +17,7 @@ body {
 }
 
 body {
-    background: var(--app-soft);
+    background-color: var(--app-soft);
     color: var(--app-ink);
     font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
@@ -32,6 +33,7 @@ body {
     background:
         radial-gradient(circle at 20% 0%, rgba(37, 99, 235, 0.35), transparent 34%),
         linear-gradient(180deg, #0f172a 0%, #111c33 100%);
+    background-color: #0f172a;
     color: #cbd5e1;
     padding: 1.5rem 1.1rem;
     display: flex;
@@ -43,38 +45,74 @@ body {
 }
 
 .app-brand {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 0.8rem;
-    margin-bottom: 2rem;
-    padding: 0 0.35rem;
+    margin-bottom: 1.75rem;
+    padding: 0.85rem;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.24), transparent 58%),
+        linear-gradient(150deg, rgba(30, 64, 175, 0.28), rgba(15, 23, 42, 0.28));
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+}
+
+.app-brand::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.55), transparent);
 }
 
 .app-brand-mark {
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
     border-radius: 14px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: #fff;
+    padding: 7px;
+    background: #fff;
+    box-shadow: 0 8px 20px rgba(2, 6, 23, 0.35);
+}
+
+.app-brand-mark img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.app-brand-copy {
+    min-width: 0;
+}
+
+.app-brand-kicker {
+    display: block;
+    color: #93c5fd;
+    font-size: 0.56rem;
     font-weight: 800;
-    letter-spacing: -0.03em;
-    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 0.18rem;
 }
 
 .app-brand-title {
     color: #fff;
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.1;
     font-size: 0.92rem;
+    letter-spacing: -0.01em;
 }
 
 .app-brand-subtitle {
     color: #94a3b8;
-    font-size: 0.7rem;
-    margin-top: 0.2rem;
+    font-size: 0.68rem;
+    margin-top: 0.22rem;
 }
 
 .app-menu .menu-label {
@@ -140,33 +178,67 @@ body {
     min-width: 0;
 }
 
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background-color: #fff;
+    border-bottom: 1px solid var(--app-line);
+}
+
 .app-topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1.5rem;
     padding: 1.15rem 2rem;
-    background: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid var(--app-line);
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    backdrop-filter: blur(8px);
+    background-color: #fff;
+}
+
+.app-topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+/* En escritorio la marca ya está en la barra lateral; en móvil se muestra aquí. */
+.app-topbar-mark {
+    display: none;
+}
+
+.app-topbar-heading {
+    position: relative;
+    padding-left: 0.8rem;
+    min-width: 0;
+}
+
+.app-topbar-heading::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.1rem;
+    bottom: 0.1rem;
+    width: 3px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #60a5fa, #1d4ed8);
 }
 
 .app-topbar-eyebrow {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    color: var(--app-muted);
-    font-weight: 700;
+    color: #2563eb;
+    font-weight: 800;
+    margin-bottom: 0.12rem;
 }
 
 .app-topbar-title {
-    font-size: 1.05rem;
-    font-weight: 700;
+    font-size: 1.25rem;
+    font-weight: 800;
     color: var(--app-ink);
-    line-height: 1.2;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
 }
 
 .app-user {
@@ -221,6 +293,7 @@ body {
 }
 
 .app-panel {
+    background-color: #fff;
     border-radius: 16px;
     border: 1px solid var(--app-line);
     box-shadow: var(--app-shadow);
@@ -292,7 +365,39 @@ body {
 }
 
 .table {
-    background: transparent;
+    background-color: #fff;
+}
+
+.table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background-color: #fff;
+}
+
+.table-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 999px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+}
+
+.table-container.is-scrollable::before {
+    content: "Desplázate para ver todas las columnas →";
+    position: sticky;
+    left: 0;
+    display: block;
+    width: max-content;
+    padding: 0 0 0.4rem;
+    color: var(--app-muted);
+    font-size: 0.68rem;
+    font-weight: 600;
 }
 
 .table thead th {
@@ -311,6 +416,85 @@ body {
 
 .is-overdue-row {
     background: #fff7ed;
+}
+
+.app-recent-table,
+.app-proveedores-table {
+    min-width: 720px;
+}
+
+.app-cuentas-table td:nth-child(1),
+.app-cuentas-table td:nth-child(3),
+.app-cuentas-table td:nth-child(4),
+.app-cuentas-table td:nth-child(5),
+.app-cuentas-table td:nth-child(6),
+.app-cuentas-table td:nth-child(8) {
+    white-space: nowrap;
+}
+
+.app-pagos-table th,
+.app-pagos-table td {
+    padding-left: 0.55em;
+    padding-right: 0.55em;
+}
+
+.app-pagos-table td:nth-child(1),
+.app-pagos-table td:nth-child(3),
+.app-pagos-table td:nth-child(5),
+.app-pagos-table td:nth-child(6) {
+    white-space: nowrap;
+}
+
+.app-pagos-table td:nth-child(1) a,
+.app-pagos-table td:nth-child(1) p {
+    white-space: nowrap;
+}
+
+.app-pagos-table .action-form {
+    min-width: 170px;
+}
+
+.app-lines-table,
+.app-movimientos-table {
+    min-width: 552px;
+}
+
+.app-report-table {
+    min-width: 820px;
+}
+
+.app-movimientos-table th,
+.app-movimientos-table td {
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    font-size: 0.78rem;
+}
+
+.app-movimientos-table td:nth-child(1),
+.app-movimientos-table td:nth-child(4) {
+    white-space: nowrap;
+}
+
+.app-movimientos-table td:nth-child(5) {
+    min-width: 95px;
+}
+
+.app-movimiento-acciones {
+    margin-top: 0.35rem;
+}
+
+.app-movimiento-acciones .action-form {
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 90px;
+}
+
+.app-movimiento-acciones .action-form .input {
+    width: 90px;
+}
+
+.app-movimiento-acciones .button {
+    width: 100%;
 }
 
 .app-empty-state {
@@ -480,6 +664,7 @@ body {
         radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.22), transparent 35%),
         radial-gradient(circle at 85% 80%, rgba(14, 165, 233, 0.14), transparent 30%),
         linear-gradient(135deg, #0f172a 0%, #172554 55%, #1e3a8a 100%);
+    background-color: #0f172a;
 }
 
 .login-shell {
@@ -495,25 +680,19 @@ body {
 }
 
 .login-card {
+    background-color: #fff;
     border-radius: 22px;
     padding: 2.5rem;
     box-shadow: 0 30px 70px rgba(2, 6, 23, 0.35);
     border: none;
 }
 
-.login-mark {
-    display: inline-flex;
-    width: 64px;
-    height: 64px;
-    border-radius: 20px;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-    color: #fff;
-    font-size: 1.4rem;
-    font-weight: 900;
-    letter-spacing: -0.05em;
-    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.35);
+.login-logo {
+    display: block;
+    width: 150px;
+    max-width: 75%;
+    height: auto;
+    margin: 0 auto;
 }
 
 .login-demo {
@@ -548,6 +727,18 @@ body {
         padding: 1rem 1.1rem;
     }
 
+    .app-topbar-mark {
+        display: inline-flex;
+        width: 54px;
+        flex: 0 0 54px;
+    }
+
+    .app-topbar-mark img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
     .app-user-copy {
         display: none;
     }
@@ -556,16 +747,19 @@ body {
         padding: 1.2rem 1rem 2.5rem;
     }
 
+    .app-content .container.is-fluid {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
     .app-mobile-nav {
         display: flex;
         gap: 0.4rem;
         overflow-x: auto;
         padding: 0.65rem 1rem;
-        background: #fff;
-        border-bottom: 1px solid var(--app-line);
-        position: sticky;
-        top: 70px;
-        z-index: 15;
+        background-color: #fff;
+        border-bottom: 0;
+        -webkit-overflow-scrolling: touch;
     }
 
     .app-mobile-nav a {
@@ -591,37 +785,25 @@ body {
         overflow-x: auto;
         width: 100%;
     }
+
 }
 
 @media (max-width: 600px) {
-    .app-recent-table {
-        table-layout: fixed;
+    .app-content .box {
+        padding: 1rem;
     }
 
-    .app-recent-table th:nth-child(2),
-    .app-recent-table td:nth-child(2),
-    .app-recent-table th:nth-child(3),
-    .app-recent-table td:nth-child(3),
-    .app-recent-table th:nth-child(4),
-    .app-recent-table td:nth-child(4),
-    .app-recent-table th:nth-child(7),
-    .app-recent-table td:nth-child(7) {
+    /* Con el logo en la barra superior, el rótulo secundario ya no cabe en una línea. */
+    .app-topbar-eyebrow {
         display: none;
     }
 
-    .app-recent-table th:nth-child(1),
-    .app-recent-table td:nth-child(1) {
-        width: 45%;
+    .app-topbar-heading {
+        padding-left: 0;
     }
 
-    .app-recent-table th:nth-child(5),
-    .app-recent-table td:nth-child(5) {
-        width: 30%;
-    }
-
-    .app-recent-table th:nth-child(6),
-    .app-recent-table td:nth-child(6) {
-        width: 25%;
+    .app-topbar-heading::before {
+        display: none;
     }
 
     .login-card {
@@ -845,4 +1027,73 @@ body {
     gap: 0.35rem;
     margin-top: 0.4rem;
     min-width: 15rem;
+}
+/* ---------- Accesibilidad (WCAG 2.1 AA) ---------- */
+
+/* Foco visible en todo elemento interactivo. Bulma solo lo definia para
+   algunos botones, asi que el resto no daba pista alguna al navegar con
+   teclado (WCAG 2.4.7).
+   Se usa !important a proposito: Bulma trae reglas :focus mas especificas
+   (p.ej. .menu-list a:focus) que dejaban el anillo en 1.6px azul enlace.
+   El indicador de foco es un minimo de accesibilidad, no debe poder perderse. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+    outline: 3px solid var(--app-primary) !important;
+    outline-offset: 2px !important;
+    border-radius: 4px;
+}
+
+/* Sobre el menu lateral oscuro el azul no contrasta: se usa blanco. */
+.app-sidebar a:focus-visible,
+.app-menu a:focus-visible {
+    outline-color: #ffffff !important;
+}
+
+/* La barra superior es fija: sin esto el elemento enfocado puede quedar
+   oculto detras de ella al tabular. */
+.app-content :focus-visible {
+    scroll-margin-top: 6rem;
+}
+
+/* Enlace para saltar el menu lateral; invisible hasta recibir foco.
+   Evita tabular 7 enlaces repetidos en cada pagina (WCAG 2.4.1). */
+.app-skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 1000;
+    padding: 0.75rem 1.25rem;
+    background: var(--app-primary);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 0 0 6px 0;
+}
+
+.app-skip-link:focus {
+    left: 0;
+}
+
+/* WCAG 1.4.11 pide 3:1 en el limite de un control. El gris propio de
+   Bulma (#dbdbdb) se queda en 1.5:1 contra blanco. */
+.input,
+.textarea,
+.select select {
+    border-color: var(--app-control-line);
+}
+
+/* Respeta la preferencia del sistema de reducir movimiento (WCAG 2.3.3). */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }

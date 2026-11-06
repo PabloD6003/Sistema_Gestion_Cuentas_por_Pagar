@@ -3,19 +3,19 @@ $visibleTotal = (int) ($total ?? 0);
 $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
 ?>
 <?php if (!empty($oob)): ?>
-    <span class="tag is-light" id="pagos-total" hx-swap-oob="true"><?= e((string) $visibleTotal) ?> <?= $recordLabel ?></span>
+    <span class="tag is-light" id="pagos-total" role="status" aria-live="polite" hx-swap-oob="true"><?= e((string) $visibleTotal) ?> <?= $recordLabel ?></span>
 <?php endif; ?>
 <div class="table-container">
-    <table class="table is-fullwidth is-hoverable is-narrow">
+    <table class="table is-fullwidth is-hoverable is-narrow app-pagos-table">
         <thead>
             <tr>
-                <th>Factura</th>
-                <th>Proveedor</th>
-                <th>Fecha</th>
-                <th>Tipo</th>
-                <th class="has-text-right">Monto</th>
-                <th>Estado</th>
-                <th>Acciones</th>
+                <th scope="col">Factura</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Tipo</th>
+                <th scope="col" class="has-text-right">Monto</th>
+                <th scope="col">Estado / conciliación</th>
+                <th scope="col">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -86,7 +86,7 @@ $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
                             <?php elseif ($isDiscount && $movEstado === 'APROBADO'): ?>
                                 <span class="is-size-7 has-text-grey">Se anula con el pago</span>
                             <?php else: ?>
-                                <span class="is-size-7 has-text-grey">Sin acciones</span>
+                                <span class="is-size-7 has-text-grey" aria-label="Sin acciones disponibles">—</span>
                             <?php endif; ?>
                         </td>
                     </tr>

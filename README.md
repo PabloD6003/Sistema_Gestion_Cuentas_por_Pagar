@@ -70,6 +70,7 @@ sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\01_correcciones.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\02_lectura.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\03_usuarios_demo.sql
 sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\04_consultas.sql
+sqlcmd -S ".\SQLEXPRESS" -E -C -I -b -f 65001 -i sql\oltp\04_datos_demo.sql
 ```
 
 Luego cargue el Data Warehouse:

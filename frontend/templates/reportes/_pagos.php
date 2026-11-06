@@ -27,13 +27,13 @@ foreach ($items as $row) {
         </div>
     <?php else: ?>
         <div class="table-container">
-            <table class="table is-fullwidth is-hoverable is-narrow">
+            <table class="table is-fullwidth is-hoverable is-narrow app-report-table">
                 <thead>
                     <tr>
-                        <th>Mes</th>
-                        <th class="has-text-right">Cantidad de pagos</th>
-                        <th class="has-text-right">Monto pagado</th>
-                        <th class="has-text-right">Descuentos obtenidos</th>
+                        <th scope="col">Mes</th>
+                        <th scope="col" class="has-text-right">Cantidad de pagos</th>
+                        <th scope="col" class="has-text-right">Monto pagado</th>
+                        <th scope="col" class="has-text-right">Descuentos obtenidos</th>
                     </tr>
                 </thead>
                 <tbody>

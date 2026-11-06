@@ -77,15 +77,15 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
         <div class="box app-panel">
             <h3 class="title is-5 mb-4">Detalle de la factura</h3>
             <div class="table-container">
-                <table class="table is-fullwidth is-narrow">
+                <table class="table is-fullwidth is-narrow app-lines-table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Descripción</th>
-                            <th class="has-text-right">Cantidad</th>
-                            <th class="has-text-right">Precio</th>
-                            <th class="has-text-right">Impuesto</th>
-                            <th class="has-text-right">Total</th>
+                            <th scope="col">#</th>
+                            <th scope="col">Descripción</th>
+                            <th scope="col" class="has-text-right">Cantidad</th>
+                            <th scope="col" class="has-text-right">Precio</th>
+                            <th scope="col" class="has-text-right">Impuesto</th>
+                            <th scope="col" class="has-text-right">Total</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -102,16 +102,16 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th colspan="5" class="has-text-right">Subtotal</th>
-                            <th class="has-text-right"><?= money($cuenta['subtotal'] ?? 0) ?></th>
+                            <th scope="row" colspan="5" class="has-text-right">Subtotal</th>
+                            <td class="has-text-right"><?= money($cuenta['subtotal'] ?? 0) ?></td>
                         </tr>
                         <tr>
-                            <th colspan="5" class="has-text-right">Impuesto</th>
-                            <th class="has-text-right"><?= money($cuenta['monto_impuesto'] ?? 0) ?></th>
+                            <th scope="row" colspan="5" class="has-text-right">Impuesto</th>
+                            <td class="has-text-right"><?= money($cuenta['monto_impuesto'] ?? 0) ?></td>
                         </tr>
                         <tr>
-                            <th colspan="5" class="has-text-right">Total</th>
-                            <th class="has-text-right"><?= money($total) ?></th>
+                            <th scope="row" colspan="5" class="has-text-right">Total</th>
+                            <td class="has-text-right"><?= money($total) ?></td>
                         </tr>
                     </tfoot>
                 </table>
@@ -129,22 +129,20 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
             </div>
 
             <div class="table-container">
-                <table class="table is-fullwidth is-hoverable is-narrow">
+                <table class="table is-fullwidth is-hoverable is-narrow app-movimientos-table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Fecha</th>
-                            <th>Tipo</th>
-                            <th>Referencia</th>
-                            <th class="has-text-right">Monto</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Referencia</th>
+                            <th scope="col" class="has-text-right">Monto</th>
+                            <th scope="col">Estado / acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (empty($movimientos)): ?>
                             <tr>
-                                <td colspan="7">
+                                <td colspan="5">
                                     <div class="app-empty-state">
                                         <p class="has-text-weight-semibold">Aún no hay pagos registrados.</p>
                                         <p class="has-text-grey is-size-7">Use el formulario de la derecha para registrar un pago.</p>
@@ -160,7 +158,6 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
                                 $isDiscount = str_contains(strtolower($movTipo), 'descuento');
                                 ?>
                                 <tr>
-                                    <td><?= $movId ?></td>
                                     <td><?= fmt_date($mov['fecha_movimiento'] ?? null) ?></td>
                                     <td><?= e($movTipo) ?></td>
                                     <td>
@@ -170,35 +167,37 @@ $diasTexto = in_array($estado, ['PAGADA', 'ANULADA'], true)
                                         <?php endif; ?>
                                     </td>
                                     <td class="has-text-right"><strong><?= money($mov['monto'] ?? 0) ?></strong></td>
-                                    <td><?= state_badge($movEstado) ?></td>
                                     <td>
-                                        <?php if ($isDiscount && $movEstado === 'REGISTRADO'): ?>
-                                            <span class="is-size-7 has-text-grey">Se aprueba con el pago</span>
-                                        <?php elseif ($canApprove && $movEstado === 'REGISTRADO'): ?>
-                                            <form method="post" action="/pagos/<?= $movId ?>/aprobar">
-                                                <?= csrf_field() ?>
-                                                <input type="hidden" name="return_to" value="/cuentas/<?= $id ?>">
-                                                <button class="button is-small is-success is-light" type="submit">Aprobar</button>
-                                            </form>
-                                        <?php elseif ($canApprove && $movEstado === 'APROBADO' && !$isDiscount && empty($mov['conciliado'])): ?>
-                                            <details class="app-inline-action">
-                                                <summary class="button is-small is-danger is-light">Anular</summary>
-                                                <form method="post" action="/pagos/<?= $movId ?>/anular" class="app-inline-form" onsubmit="return confirm('¿Anular este pago? Se restaurará el saldo de la factura.');">
+                                        <?= state_badge($movEstado) ?>
+                                        <div class="app-movimiento-acciones">
+                                            <?php if ($isDiscount && $movEstado === 'REGISTRADO'): ?>
+                                                <span class="is-size-7 has-text-grey">Se aprueba con el pago</span>
+                                            <?php elseif ($canApprove && $movEstado === 'REGISTRADO'): ?>
+                                                <form method="post" action="/pagos/<?= $movId ?>/aprobar">
                                                     <?= csrf_field() ?>
                                                     <input type="hidden" name="return_to" value="/cuentas/<?= $id ?>">
-                                                    <input class="input is-small" name="motivo" placeholder="Motivo de la anulación" maxlength="150" required>
-                                                    <button class="button is-small is-danger" type="submit">Confirmar</button>
+                                                    <button class="button is-small is-success is-light" type="submit">Aprobar</button>
                                                 </form>
-                                            </details>
-                                        <?php elseif ($canApprove && $movEstado === 'APROBADO' && !empty($mov['conciliado'])): ?>
-                                            <span class="tag is-link">Conciliado</span>
-                                        <?php elseif ($isDiscount && $movEstado === 'APROBADO'): ?>
-                                            <span class="is-size-7 has-text-grey">Se anula con el pago</span>
-                                        <?php elseif ($movEstado === 'ANULADO'): ?>
-                                            <span class="is-size-7 has-text-grey">—</span>
-                                        <?php else: ?>
-                                            <span class="is-size-7 has-text-grey">Sin acciones</span>
-                                        <?php endif; ?>
+                                            <?php elseif ($canApprove && $movEstado === 'APROBADO' && !$isDiscount && empty($mov['conciliado'])): ?>
+                                                <details class="app-inline-action">
+                                                    <summary class="button is-small is-danger is-light">Anular</summary>
+                                                    <form method="post" action="/pagos/<?= $movId ?>/anular" class="app-inline-form" onsubmit="return confirm('¿Anular este pago? Se restaurará el saldo de la factura.');">
+                                                        <?= csrf_field() ?>
+                                                        <input type="hidden" name="return_to" value="/cuentas/<?= $id ?>">
+                                                        <input class="input is-small" name="motivo" placeholder="Motivo de la anulación" maxlength="150" required>
+                                                        <button class="button is-small is-danger" type="submit">Confirmar</button>
+                                                    </form>
+                                                </details>
+                                            <?php elseif ($canApprove && $movEstado === 'APROBADO' && !empty($mov['conciliado'])): ?>
+                                                <span class="tag is-link">Conciliado</span>
+                                            <?php elseif ($isDiscount && $movEstado === 'APROBADO'): ?>
+                                                <span class="is-size-7 has-text-grey">Se anula con el pago</span>
+                                            <?php elseif ($movEstado === 'ANULADO'): ?>
+                                                <span class="is-size-7 has-text-grey">—</span>
+                                            <?php else: ?>
+                                                <span class="is-size-7 has-text-grey">Sin acciones</span>
+                                            <?php endif; ?>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

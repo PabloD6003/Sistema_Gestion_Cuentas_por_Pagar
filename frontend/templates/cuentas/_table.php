@@ -3,21 +3,21 @@ $visibleTotal = (int) ($total ?? 0);
 $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
 ?>
 <?php if (!empty($oob)): ?>
-    <span class="tag is-light" id="cuentas-total" hx-swap-oob="true"><?= e((string) $visibleTotal) ?> <?= $recordLabel ?></span>
+    <span class="tag is-light" id="cuentas-total" role="status" aria-live="polite" hx-swap-oob="true"><?= e((string) $visibleTotal) ?> <?= $recordLabel ?></span>
 <?php endif; ?>
 <div class="table-container">
-    <table class="table is-fullwidth is-hoverable is-narrow">
+    <table class="table is-fullwidth is-hoverable is-narrow app-cuentas-table">
         <thead>
             <tr>
-                <th>Factura</th>
-                <th>Proveedor</th>
-                <th>Emisión</th>
-                <th>Vencimiento</th>
-                <th class="has-text-right">Total</th>
-                <th class="has-text-right">Saldo</th>
-                <th>Estado</th>
-                <th>Días</th>
-                <th></th>
+                <th scope="col">Factura</th>
+                <th scope="col">Proveedor</th>
+                <th scope="col">Emisión</th>
+                <th scope="col">Vencimiento</th>
+                <th scope="col" class="has-text-right">Total</th>
+                <th scope="col" class="has-text-right">Saldo</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Días</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
