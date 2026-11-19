@@ -61,3 +61,9 @@ $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
         </tbody>
     </table>
 </div>
+<?php
+$paginationBase = '/proveedores';
+$paginationEndpoint = '/partials/proveedores';
+$paginationTarget = 'proveedores-tabla';
+$paginationForm = 'proveedores-filtros';
+require APP_BASE_PATH . '/templates/partials/pagination.php';

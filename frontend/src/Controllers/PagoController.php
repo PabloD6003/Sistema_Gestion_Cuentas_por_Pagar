@@ -14,6 +14,8 @@ use App\View;
 
 final class PagoController
 {
+    private const PER_PAGE = 20;
+
     public function index(Request $request, array $params = []): Response
     {
         Auth::requireLogin();
@@ -23,6 +25,7 @@ final class PagoController
             'pageTitle' => 'Pagos',
             'items' => $data['items'] ?? [],
             'total' => $data['total'] ?? 0,
+            'pagination' => $this->pagination($data),
             'filters' => $this->filters($request),
             'canApprove' => Auth::canApprove(),
         ]));
@@ -36,7 +39,9 @@ final class PagoController
         return Response::html(View::render('pagos/_table', [
             'items' => $data['items'] ?? [],
             'total' => $data['total'] ?? 0,
+            'pagination' => $this->pagination($data),
             'canApprove' => Auth::canApprove(),
+            'filters' => $this->filters($request),
             'oob' => true,
         ], null));
     }
@@ -139,6 +144,18 @@ final class PagoController
     }
 
     /**
+     * @param array<string, mixed> $data
+     * @return array{page: int, pages: int}
+     */
+    private function pagination(array $data): array
+    {
+        return [
+            'page' => (int) ($data['page'] ?? 1),
+            'pages' => (int) ($data['pages'] ?? 0),
+        ];
+    }
+
+    /**
      * @return array{q: string, estado: string, tipo: string, conciliado: string}
      */
     private function filters(Request $request): array
@@ -157,7 +174,10 @@ final class PagoController
     private function fetch(Request $request): array
     {
         $filters = $this->filters($request);
-        $query = ['per_page' => 50];
+        $query = [
+            'per_page' => self::PER_PAGE,
+            'page' => max(1, (int) $request->query('page', 1)),
+        ];
 
         foreach (['q', 'estado', 'tipo'] as $key) {
             if ($filters[$key] !== '') {

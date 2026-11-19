@@ -243,7 +243,6 @@ docs/                    Documentación y diagramas
 - El Data Warehouse se alimenta con un ETL batch; los reportes del DW muestran la última carga. El flujo de caja proyectado se calcula al momento desde el OLTP.
 - La conciliación bancaria se hace pegando el extracto en la pantalla de Tesorería; no hay conexión directa con los bancos.
 - Los comprobantes de pago quedan en la cola de notificaciones (`CP18_notificaciones`); el envío del correo no está implementado.
-- Las tablas usan paginación del API, pero la interfaz no incluye controles de páginas.
 - El proyecto está pensado para ejecución local y académica; no incluye despliegue en producción, HTTPS ni un servidor web empresarial.
 
 ## Problemas frecuentes

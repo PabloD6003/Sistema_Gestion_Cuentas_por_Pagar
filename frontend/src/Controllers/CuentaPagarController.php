@@ -14,6 +14,8 @@ use App\View;
 
 final class CuentaPagarController
 {
+    private const PER_PAGE = 20;
+
     public function index(Request $request, array $params = []): Response
     {
         Auth::requireLogin();
@@ -23,6 +25,7 @@ final class CuentaPagarController
             'pageTitle' => 'Cuentas por pagar',
             'items' => $data['items'] ?? [],
             'total' => $data['total'] ?? 0,
+            'pagination' => $this->pagination($data),
             'filters' => $this->filters($request),
         ]));
     }
@@ -35,6 +38,8 @@ final class CuentaPagarController
         return Response::html(View::render('cuentas/_table', [
             'items' => $data['items'] ?? [],
             'total' => $data['total'] ?? 0,
+            'pagination' => $this->pagination($data),
+            'filters' => $this->filters($request),
             'oob' => true,
         ], null));
     }
@@ -231,6 +236,18 @@ final class CuentaPagarController
     }
 
     /**
+     * @param array<string, mixed> $data
+     * @return array{page: int, pages: int}
+     */
+    private function pagination(array $data): array
+    {
+        return [
+            'page' => (int) ($data['page'] ?? 1),
+            'pages' => (int) ($data['pages'] ?? 0),
+        ];
+    }
+
+    /**
      * @return array{q: string, estado: string, vencidas: string}
      */
     private function filters(Request $request): array
@@ -248,7 +265,10 @@ final class CuentaPagarController
     private function fetch(Request $request): array
     {
         $filters = $this->filters($request);
-        $query = ['per_page' => 50];
+        $query = [
+            'per_page' => self::PER_PAGE,
+            'page' => max(1, (int) $request->query('page', 1)),
+        ];
 
         if ($filters['q'] !== '') {
             $query['q'] = $filters['q'];

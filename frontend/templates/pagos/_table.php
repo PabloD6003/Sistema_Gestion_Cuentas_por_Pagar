@@ -95,3 +95,9 @@ $recordLabel = $visibleTotal === 1 ? 'registro' : 'registros';
         </tbody>
     </table>
 </div>
+<?php
+$paginationBase = '/pagos';
+$paginationEndpoint = '/partials/pagos';
+$paginationTarget = 'pagos-tabla';
+$paginationForm = 'pagos-filtros';
+require APP_BASE_PATH . '/templates/partials/pagination.php';
