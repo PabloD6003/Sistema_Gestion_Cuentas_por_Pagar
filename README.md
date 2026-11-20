@@ -250,6 +250,6 @@ docs/                    Documentación y diagramas
 - **`could not find driver` o error de conexión:** confirme que `pdo_odbc` y `odbc` están disponibles (`php -m`) y que el ODBC Driver 18 está instalado.
 - **Error de cURL en la interfaz:** habilite `curl` o use `-d extension=php_curl.dll`.
 - **No puedo iniciar sesión:** ejecute `sql/oltp/03_usuarios_demo.sql` y confirme que los usuarios existen.
-- **Los reportes están vacíos:** ejecute `EXEC etl.sp_ejecutar_todo` en `CuentasPorPagarDW`.
+- **Los reportes están vacíos o desactualizados:** como Administrador, use **Reportes → Estado ETL → Ejecutar ETL ahora**, o ejecute `EXEC etl.sp_ejecutar_todo` en `CuentasPorPagarDW`.
 - **No conecta a SQL Server:** revise `DB_HOST` y el nombre real de la instancia; si usa autenticación SQL, revise `DB_TRUSTED`, `DB_USER` y `DB_PASSWORD`.
 - **El puerto está ocupado:** cambie `8000` o `8090` en los comandos y, para el API, actualice `API_BASE_URL` en `frontend/.env`.

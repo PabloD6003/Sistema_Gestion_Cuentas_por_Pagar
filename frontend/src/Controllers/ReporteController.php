@@ -19,14 +19,18 @@ final class ReporteController
     public function index(Request $request, array $params = []): Response
     {
         Auth::requireLogin();
+        $tipo = (string) $request->query('tipo', 'aging');
+        if (!in_array($tipo, self::TIPOS, true)) {
+            $tipo = 'aging';
+        }
 
-        [$html, $error] = $this->content('aging');
+        [$html, $error] = $this->content($tipo);
 
         return Response::html(View::render('reportes/index', [
             'pageTitle' => 'Reportes',
             'contenido' => $html,
             'error' => $error,
-            'tipoActivo' => 'aging',
+            'tipoActivo' => $tipo,
         ]));
     }
 
@@ -42,6 +46,36 @@ final class ReporteController
         [$html] = $this->content($tipo, $this->filtros($request));
 
         return Response::html($html);
+    }
+
+    /**
+     * Ejecuta el ETL del Data Warehouse a pedido del administrador y vuelve a la pestaña
+     * "Estado ETL" con el resultado.
+     */
+    public function ejecutarEtl(Request $request, array $params = []): Response
+    {
+        Auth::requireLogin();
+
+        if (!Auth::isAdmin()) {
+            throw new HttpException('Solo un administrador puede ejecutar el ETL.', 403);
+        }
+
+        try {
+            // El ETL completo tarda más que una consulta normal
+            $resultado = ApiClient::forSession()->post('/api/etl/ejecutar', [], 300);
+            flash('success', sprintf(
+                'ETL ejecutado correctamente (ejecución #%d). Los reportes ya incluyen los datos registrados hasta ahora.',
+                (int) ($resultado['id_ejecucion'] ?? 0)
+            ));
+        } catch (ApiException $exception) {
+            if ($exception->statusCode() === 401) {
+                throw $exception;
+            }
+
+            flash('error', 'El ETL no pudo completarse: ' . $exception->getMessage());
+        }
+
+        return Response::redirect('/reportes?tipo=etl');
     }
 
     /**
@@ -81,6 +115,7 @@ final class ReporteController
                 $response = $api->get('/api/reportes/etl');
                 $html = View::render('reportes/_etl', [
                     'etl' => $response['data'] ?? null,
+                    'puedeEjecutar' => Auth::isAdmin(),
                 ], null);
             } else {
                 $path = match ($tipo) {

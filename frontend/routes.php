@@ -50,6 +50,7 @@ $router->post('/pagos/{id}/anular', [PagoController::class, 'annul']);
 
 $router->get('/reportes', [ReporteController::class, 'index']);
 $router->get('/partials/reportes/{tipo}', [ReporteController::class, 'partial']);
+$router->post('/reportes/etl', [ReporteController::class, 'ejecutarEtl']);
 
 $router->get('/tesoreria', [TesoreriaController::class, 'index']);
 $router->post('/tesoreria/lotes', [TesoreriaController::class, 'generarLote']);

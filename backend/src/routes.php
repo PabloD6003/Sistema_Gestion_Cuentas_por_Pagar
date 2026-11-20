@@ -56,6 +56,7 @@ $router->get('/api/reportes/cumplimiento', [ReporteController::class, 'cumplimie
 $router->get('/api/reportes/saldos-proveedor', [ReporteController::class, 'saldosProveedor']);
 $router->get('/api/reportes/etl', [ReporteController::class, 'etl']);
 $router->get('/api/reportes/flujo-caja', [ReporteController::class, 'flujoCaja']);
+$router->post('/api/etl/ejecutar', [ReporteController::class, 'ejecutarEtl']);
 
 $router->get('/api/respaldos', [RespaldoController::class, 'index']);
 $router->post('/api/respaldos', [RespaldoController::class, 'store']);

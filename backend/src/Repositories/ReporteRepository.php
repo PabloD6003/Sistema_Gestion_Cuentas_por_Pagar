@@ -87,6 +87,24 @@ final class ReporteRepository
     /**
      * @return array<string, mixed>|null
      */
+    /**
+     * Ejecuta el ETL completo y deja en la auditoría quién lo lanzó.
+     *
+     * @return array<string, mixed>
+     */
+    public function ejecutarEtl(int $userId): array
+    {
+        $rows = Database::call('SET NOCOUNT ON; EXEC CuentasPorPagarDW.etl.sp_ejecutar_todo;');
+        $resultado = Cast::row($rows[0] ?? [], ['id_ejecucion']);
+
+        Database::call(
+            'EXEC dbo.sp_auditoria_registrar @id_usuario = ?, @tabla_afectada = ?, @id_registro = ?, @accion = ?;',
+            [$userId, 'etl.ejecucion', (string) ($resultado['id_ejecucion'] ?? ''), 'EJECUTAR']
+        );
+
+        return $resultado;
+    }
+
     public function etlUltimaCarga(): ?array
     {
         return Database::call('EXEC CuentasPorPagarDW.rpt.sp_etl_ultima_carga;')[0] ?? null;

@@ -96,6 +96,17 @@ final class ReporteController
         ]);
     }
 
+    /**
+     * Ejecuta el ETL completo del Data Warehouse bajo demanda (etl.sp_ejecutar_todo).
+     * Solo el administrador: es una tarea de operación, igual que los respaldos.
+     */
+    public function ejecutarEtl(Request $request, array $params = []): Response
+    {
+        $user = Auth::requireAdmin();
+
+        return Response::json($this->reportes->ejecutarEtl((int) $user['id_usuario']), 201);
+    }
+
     public function etl(Request $request, array $params = []): Response
     {
         Auth::requireLogin();

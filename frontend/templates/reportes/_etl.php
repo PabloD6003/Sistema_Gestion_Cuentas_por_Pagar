@@ -11,10 +11,23 @@
         </div>
     </div>
 
+    <div class="app-etl-run mb-4 no-print">
+        <?php if (!empty($puedeEjecutar)): ?>
+            <form method="post" action="/reportes/etl"
+                  onsubmit="const b = this.querySelector('button'); b.disabled = true; b.classList.add('is-loading');">
+                <?= csrf_field() ?>
+                <button class="button is-primary" type="submit">Ejecutar ETL ahora</button>
+            </form>
+            <p class="help">Copia al Data Warehouse las facturas y pagos registrados desde la última carga. Tarda unos segundos.</p>
+        <?php else: ?>
+            <p class="has-text-grey is-size-7">Solo el administrador puede ejecutar el ETL.</p>
+        <?php endif; ?>
+    </div>
+
     <?php if (!is_array($etl)): ?>
         <div class="app-empty-state">
             <p class="has-text-weight-semibold">No hay ejecuciones del ETL registradas.</p>
-            <p class="has-text-grey is-size-7">Ejecute <code>sql/dw/03_etl.sql</code> y vuelva a consultar.</p>
+            <p class="has-text-grey is-size-7">Use el botón <strong>Ejecutar ETL ahora</strong> para hacer la primera carga.</p>
         </div>
     <?php else: ?>
         <div class="columns is-multiline">

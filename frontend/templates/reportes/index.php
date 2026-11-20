@@ -23,12 +23,12 @@
 <div class="reporte-tabs-wrap">
     <div class="tabs is-boxed reporte-tabs">
         <ul>
-            <li class="is-active"><a href="/reportes" class="reporte-tab" data-tipo="aging" hx-get="/partials/reportes/aging" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Antigüedad</a></li>
-            <li><a href="/reportes" class="reporte-tab" data-tipo="pagos" hx-get="/partials/reportes/pagos" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Pagos por mes</a></li>
-            <li><a href="/reportes" class="reporte-tab" data-tipo="cumplimiento" hx-get="/partials/reportes/cumplimiento" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Cumplimiento</a></li>
-            <li><a href="/reportes" class="reporte-tab" data-tipo="saldos" hx-get="/partials/reportes/saldos" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Saldos por proveedor</a></li>
-            <li><a href="/reportes" class="reporte-tab" data-tipo="flujo" hx-get="/partials/reportes/flujo" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Flujo de caja</a></li>
-            <li><a href="/reportes" class="reporte-tab" data-tipo="etl" hx-get="/partials/reportes/etl" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Estado ETL</a></li>
+            <li<?= ($tipoActivo ?? 'aging') === 'aging' ? ' class="is-active"' : '' ?>><a href="/reportes?tipo=aging" class="reporte-tab" data-tipo="aging" hx-get="/partials/reportes/aging" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Antigüedad</a></li>
+            <li<?= ($tipoActivo ?? 'aging') === 'pagos' ? ' class="is-active"' : '' ?>><a href="/reportes?tipo=pagos" class="reporte-tab" data-tipo="pagos" hx-get="/partials/reportes/pagos" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Pagos por mes</a></li>
+            <li<?= ($tipoActivo ?? 'aging') === 'cumplimiento' ? ' class="is-active"' : '' ?>><a href="/reportes?tipo=cumplimiento" class="reporte-tab" data-tipo="cumplimiento" hx-get="/partials/reportes/cumplimiento" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Cumplimiento</a></li>
+            <li<?= ($tipoActivo ?? 'aging') === 'saldos' ? ' class="is-active"' : '' ?>><a href="/reportes?tipo=saldos" class="reporte-tab" data-tipo="saldos" hx-get="/partials/reportes/saldos" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Saldos por proveedor</a></li>
+            <li<?= ($tipoActivo ?? 'aging') === 'flujo' ? ' class="is-active"' : '' ?>><a href="/reportes?tipo=flujo" class="reporte-tab" data-tipo="flujo" hx-get="/partials/reportes/flujo" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Flujo de caja</a></li>
+            <li<?= ($tipoActivo ?? 'aging') === 'etl' ? ' class="is-active"' : '' ?>><a href="/reportes?tipo=etl" class="reporte-tab" data-tipo="etl" hx-get="/partials/reportes/etl" hx-target="#reporte-contenido" hx-swap="innerHTML" hx-indicator="#reporte-loading">Estado ETL</a></li>
         </ul>
     </div>
     <span id="reporte-loading" class="htmx-indicator has-text-grey is-size-7">Cargando reporte…</span>
