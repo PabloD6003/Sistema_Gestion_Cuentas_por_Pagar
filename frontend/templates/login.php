@@ -38,11 +38,11 @@
         <div class="login-demo">
             <p class="has-text-weight-semibold mb-2">Usuarios de demostración</p>
             <div class="login-demo-grid">
-                <span><strong>admin</strong> / Admin1234</span>
-                <span><strong>tesorero</strong> / Tesorero123</span>
-                <span><strong>contador</strong> / Contador123</span>
+                <span><strong>admin</strong> · Administrador</span>
+                <span><strong>tesorero</strong> · Tesorero</span>
+                <span><strong>contador</strong> · Contador</span>
             </div>
-            <p class="is-size-7 has-text-grey mt-2">El administrador y el tesorero pueden aprobar pagos. El contador registra facturas y pagos.</p>
+            <p class="is-size-7 has-text-grey mt-2">El administrador y el tesorero pueden aprobar pagos. El contador registra facturas y pagos. Las contraseñas las entrega el responsable del sistema.</p>
         </div>
     </div>
 </section>
