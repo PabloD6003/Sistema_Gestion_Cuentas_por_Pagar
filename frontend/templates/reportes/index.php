@@ -1,4 +1,10 @@
-<div class="level mb-5">
+<?php /* Encabezado que solo aparece al imprimir o guardar como PDF */ ?>
+<div class="print-only print-header">
+    <p class="print-header-title">Sistema de Gestión de Cuentas por Pagar</p>
+    <p class="print-header-meta">Generado el <?= fmt_datetime(date('Y-m-d H:i:s')) ?></p>
+</div>
+
+<div class="level mb-5 reportes-header">
     <div class="level-left">
         <div>
             <p class="app-section-eyebrow">Business Intelligence</p>
@@ -8,6 +14,9 @@
     </div>
     <div class="level-right">
         <span class="tag is-light">ETL batch diario</span>
+        <button class="button is-small is-light no-print" type="button" id="imprimir-reporte">
+            Imprimir o guardar PDF
+        </button>
     </div>
 </div>
 

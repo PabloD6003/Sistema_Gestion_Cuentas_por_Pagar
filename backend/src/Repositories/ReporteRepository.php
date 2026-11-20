@@ -12,9 +12,12 @@ final class ReporteRepository
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function aging(): array
+    public function aging(?string $buscar = null, ?string $bucket = null): array
     {
-        $rows = Database::call('EXEC CuentasPorPagarDW.rpt.sp_antiguedad_actual @maximo = ?;', [500]);
+        $rows = Database::call(
+            'EXEC CuentasPorPagarDW.rpt.sp_antiguedad_actual @maximo = ?, @buscar = ?, @bucket = ?;',
+            [500, $buscar, $bucket]
+        );
 
         return Cast::rows($rows, ['id_proveedor', 'dias_vencido'], ['saldo_pendiente']);
     }
@@ -22,9 +25,12 @@ final class ReporteRepository
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function pagosMes(): array
+    public function pagosMes(?string $desde = null, ?string $hasta = null): array
     {
-        $rows = Database::call('EXEC CuentasPorPagarDW.rpt.sp_pagos_por_mes;');
+        $rows = Database::call(
+            'EXEC CuentasPorPagarDW.rpt.sp_pagos_por_mes @desde = ?, @hasta = ?;',
+            [$desde, $hasta]
+        );
 
         return Cast::rows($rows, ['cantidad_pagos'], ['monto_pagado', 'monto_descuento']);
     }
@@ -32,9 +38,12 @@ final class ReporteRepository
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function cumplimiento(): array
+    public function cumplimiento(?string $desde = null, ?string $hasta = null): array
     {
-        $rows = Database::call('EXEC CuentasPorPagarDW.rpt.sp_resumen_cumplimiento_plazo;');
+        $rows = Database::call(
+            'EXEC CuentasPorPagarDW.rpt.sp_resumen_cumplimiento_plazo @desde = ?, @hasta = ?;',
+            [$desde, $hasta]
+        );
 
         return Cast::rows(
             $rows,
@@ -46,9 +55,12 @@ final class ReporteRepository
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function saldosProveedor(): array
+    public function saldosProveedor(?string $buscar = null, ?float $saldoMinimo = null): array
     {
-        $rows = Database::call('EXEC CuentasPorPagarDW.rpt.sp_saldos_por_proveedor;');
+        $rows = Database::call(
+            'EXEC CuentasPorPagarDW.rpt.sp_saldos_por_proveedor @buscar = ?, @saldo_minimo = ?;',
+            [$buscar, $saldoMinimo]
+        );
 
         return Cast::rows($rows, ['id_proveedor', 'facturas_abiertas'], ['saldo_pendiente']);
     }

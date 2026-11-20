@@ -128,10 +128,26 @@
         });
     }
 
+    /**
+     * Imprime el reporte visible. La hoja @media print deja solo el panel del reporte,
+     * y desde el diálogo del navegador se guarda como PDF.
+     */
+    function initPrintReport() {
+        const button = document.getElementById('imprimir-reporte');
+        if (!button) {
+            return;
+        }
+
+        button.addEventListener('click', function () {
+            window.print();
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         initLineItems();
         initPaymentDiscount();
         initReportTabs();
         initFlashClose();
+        initPrintReport();
     });
 })();

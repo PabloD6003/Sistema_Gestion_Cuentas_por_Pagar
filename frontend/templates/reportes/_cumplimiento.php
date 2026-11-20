@@ -11,6 +11,23 @@
         </div>
     </div>
 
+    <form id="cumplimiento-filtros" class="filters mb-4" hx-get="/partials/reportes/cumplimiento" hx-target="#reporte-contenido"
+          hx-swap="innerHTML" hx-indicator="#reporte-loading" hx-trigger="submit">
+        <div class="field is-grouped is-grouped-multiline">
+            <div class="control">
+                <label class="label is-small" for="cumplimiento-desde">Desde el mes</label>
+                <input class="input is-small" id="cumplimiento-desde" type="month" name="desde" value="<?= e($filtros['desde'] ?? '') ?>">
+            </div>
+            <div class="control">
+                <label class="label is-small" for="cumplimiento-hasta">Hasta el mes</label>
+                <input class="input is-small" id="cumplimiento-hasta" type="month" name="hasta" value="<?= e($filtros['hasta'] ?? '') ?>">
+            </div>
+            <div class="control" style="align-self: flex-end;">
+                <button class="button is-small is-primary" type="submit">Filtrar</button>
+            </div>
+        </div>
+    </form>
+
     <?php if (empty($items)): ?>
         <div class="app-empty-state">
             <p class="has-text-weight-semibold">No hay pagos suficientes para calcular el indicador.</p>

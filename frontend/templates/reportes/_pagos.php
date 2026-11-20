@@ -20,6 +20,23 @@ foreach ($items as $row) {
         </div>
     </div>
 
+    <form id="pagos-filtros" class="filters mb-4" hx-get="/partials/reportes/pagos" hx-target="#reporte-contenido"
+          hx-swap="innerHTML" hx-indicator="#reporte-loading" hx-trigger="submit">
+        <div class="field is-grouped is-grouped-multiline">
+            <div class="control">
+                <label class="label is-small" for="pagos-desde">Desde el mes</label>
+                <input class="input is-small" id="pagos-desde" type="month" name="desde" value="<?= e($filtros['desde'] ?? '') ?>">
+            </div>
+            <div class="control">
+                <label class="label is-small" for="pagos-hasta">Hasta el mes</label>
+                <input class="input is-small" id="pagos-hasta" type="month" name="hasta" value="<?= e($filtros['hasta'] ?? '') ?>">
+            </div>
+            <div class="control" style="align-self: flex-end;">
+                <button class="button is-small is-primary" type="submit">Filtrar</button>
+            </div>
+        </div>
+    </form>
+
     <?php if (empty($items)): ?>
         <div class="app-empty-state">
             <p class="has-text-weight-semibold">No hay pagos históricos en el Data Warehouse.</p>

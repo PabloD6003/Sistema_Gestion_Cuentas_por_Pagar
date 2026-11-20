@@ -17,6 +17,33 @@ foreach ($items as $row) {
         </div>
     </div>
 
+    <form id="aging-filtros" class="filters mb-4" hx-get="/partials/reportes/aging" hx-target="#reporte-contenido"
+          hx-swap="innerHTML" hx-indicator="#reporte-loading" hx-trigger="submit">
+        <div class="field is-grouped is-grouped-multiline">
+            <div class="control">
+                <label class="label is-small" for="aging-buscar">Proveedor o factura</label>
+                <input class="input is-small" id="aging-buscar" type="search" name="buscar"
+                       value="<?= e($filtros['buscar'] ?? '') ?>" placeholder="Buscar">
+            </div>
+            <div class="control">
+                <label class="label is-small" for="aging-bucket">Tramo de antigüedad</label>
+                <div class="select is-small">
+                    <select id="aging-bucket" name="bucket">
+                        <option value="">Todos los tramos</option>
+                        <?php foreach (['0-30', '31-60', '61-90', '90+'] as $tramo): ?>
+                            <option value="<?= e($tramo) ?>" <?= ($filtros['bucket'] ?? '') === $tramo ? 'selected' : '' ?>>
+                                <?= e($tramo) ?> días
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="control" style="align-self: flex-end;">
+                <button class="button is-small is-primary" type="submit">Filtrar</button>
+            </div>
+        </div>
+    </form>
+
     <?php if (empty($items)): ?>
         <div class="app-empty-state">
             <p class="has-text-weight-semibold">No hay saldos abiertos en el Data Warehouse.</p>

@@ -39,11 +39,7 @@ final class ReporteController
             throw new HttpException('Reporte no encontrado.', 404);
         }
 
-        [$html] = $this->content($tipo, [
-            'desde' => (string) $request->query('desde', ''),
-            'hasta' => (string) $request->query('hasta', ''),
-            'agrupacion' => (string) $request->query('agrupacion', ''),
-        ]);
+        [$html] = $this->content($tipo, $this->filtros($request));
 
         return Response::html($html);
     }
@@ -52,6 +48,21 @@ final class ReporteController
      * @param array<string, string> $query
      * @return array{0: string, 1: string|null}
      */
+    /**
+     * Filtros que puede llevar cualquier reporte. Los vacíos se descartan más abajo.
+     *
+     * @return array<string, string>
+     */
+    private function filtros(Request $request): array
+    {
+        $filtros = [];
+        foreach (['desde', 'hasta', 'agrupacion', 'buscar', 'bucket', 'saldo_minimo'] as $campo) {
+            $filtros[$campo] = trim((string) $request->query($campo, ''));
+        }
+
+        return $filtros;
+    }
+
     private function content(string $tipo, array $query = []): array
     {
         try {
@@ -80,7 +91,19 @@ final class ReporteController
                     default => '/api/reportes/aging',
                 };
 
-                $response = $api->get($path);
+                // Cada reporte acepta solo sus filtros; el resto se descarta
+                $admitidos = match ($tipo) {
+                    'aging' => ['buscar', 'bucket'],
+                    'pagos', 'cumplimiento' => ['desde', 'hasta'],
+                    'saldos' => ['buscar', 'saldo_minimo'],
+                    default => [],
+                };
+                $filtros = array_filter(
+                    array_intersect_key($query, array_flip($admitidos)),
+                    static fn ($valor): bool => $valor !== '' && $valor !== null
+                );
+
+                $response = $api->get($path . ($filtros === [] ? '' : '?' . http_build_query($filtros)));
                 $template = match ($tipo) {
                     'aging' => 'reportes/_aging',
                     'pagos' => 'reportes/_pagos',
@@ -91,6 +114,7 @@ final class ReporteController
 
                 $html = View::render($template, [
                     'items' => $response['items'] ?? [],
+                    'filtros' => $filtros,
                 ], null);
             }
 
